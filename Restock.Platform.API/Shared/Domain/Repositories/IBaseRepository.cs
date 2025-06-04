@@ -1,4 +1,4 @@
-namespace Restock.Plaform.API.Shared.Domain.Repositories;
+namespace Restock.Platform.API.Shared.Domain.Repositories;
 
 public interface IBaseRepository<TEntity>
 {

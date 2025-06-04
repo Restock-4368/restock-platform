@@ -1,6 +1,6 @@
 @Restock.Plaform.API_HostAddress = http://localhost:5063
 
-GET {{Restock.Plaform.API_HostAddress}}/weatherforecast/
+GET {{Restock.Platform.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

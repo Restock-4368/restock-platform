@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restock.Plaform.API", "Restock.Plaform.API\Restock.Plaform.API.csproj", "{E62D9FD6-48F1-4338-8925-18A7388C47CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restock.Platform.API", "Restock.Platform.API\Restock.Platform.API.csproj", "{E62D9FD6-48F1-4338-8925-18A7388C47CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

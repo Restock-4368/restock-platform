@@ -1,6 +1,21 @@
+using Restock.Platform.API.Shared.Domain.Repositories;
+using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
+
 namespace Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 
-public class UnitOfWork
+/// <summary>
+///     Unit of work implementation
+/// </summary>
+/// <remarks>
+///     This class implements the basic operations for a unit of work.
+///     It requires the context to be passed in the constructor.
+/// </remarks>
+/// <see cref="IUnitOfWork" />
+public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {
-    
+    /// <inheritdoc />
+    public async Task CompleteAsync()
+    {
+        await context.SaveChangesAsync();
+    }
 }
