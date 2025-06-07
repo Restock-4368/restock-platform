@@ -31,4 +31,9 @@
 
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Planning\Domain\Model\Commands\" />
+      <Folder Include="Planning\Domain\Model\Queries\" />
+    </ItemGroup>
+
 </Project>
