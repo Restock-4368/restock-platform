@@ -18,7 +18,7 @@ It also illustrates open-api documentation configuration and integration with Sw
 - Domain-Driven Design
 
 ## Bounded Contexts
-This version of Restock Platform is divided into two bounded contexts: Profiles, and Publishing.
+This version of Restock Platform is divided into several bounded contexts, "Analytics", "IAM", "Monitoring", "Planning", "Profiles", "Resource" and "Subscription".
 
 ### Profiles Context
 
