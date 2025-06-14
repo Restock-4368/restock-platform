@@ -5,11 +5,15 @@ namespace Restock.Platform.API.Planning.Domain.Model.Entities;
 
 public class RecipeSupply
 {
+    public RecipeIdentifier RecipeId { get; init; }
     public SupplyIdentifier SupplyId { get; init; }
     public RecipeQuantity Quantity { get; private set; }
-    
-    public RecipeSupply(SupplyIdentifier supplyId, RecipeQuantity quantity)
+
+    protected RecipeSupply() { } 
+
+    public RecipeSupply(RecipeIdentifier recipeId, SupplyIdentifier supplyId, RecipeQuantity quantity)
     {
+        RecipeId = recipeId;
         SupplyId = supplyId;
         Quantity = quantity;
     }
