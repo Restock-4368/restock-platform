@@ -36,7 +36,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resource\Domain\Model\Entities\" />
+      <Folder Include="Analytics\" />
+      <Folder Include="IAM\" />
+      <Folder Include="Monitoring\Application\" />
+      <Folder Include="Monitoring\Domain\" />
+      <Folder Include="Monitoring\Infrastructure\" />
+      <Folder Include="Monitoring\Interfaces\" />
+      <Folder Include="Profiles\" />
+      <Folder Include="Subscription\" />
     </ItemGroup>
 
 </Project>
