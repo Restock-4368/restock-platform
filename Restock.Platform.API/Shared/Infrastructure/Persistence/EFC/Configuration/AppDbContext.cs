@@ -27,64 +27,54 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         base.OnModelCreating(builder);
         builder.UseSnakeCaseNamingConvention();
 
-        // ---------------- RECIPE ----------------
+        // ========== Recipe ==========
         builder.Entity<Recipe>(recipe =>
         {
-            recipe.HasKey("_id");
-            recipe.Ignore(r => r.Supplies); 
-
-            // Mapear value object RecipeIdentifier
-            recipe.OwnsOne(r => r.Id, id =>
-            {
-                id.Property(p => p.Value).HasColumnName("id");
-            });
+            recipe.HasKey(r => r.Id);
+            recipe.Property(r => r.Id)
+                .HasConversion(id => id.Value, value => new RecipeIdentifier(value))
+                .ValueGeneratedNever(); 
 
             recipe.Property(r => r.Name).IsRequired().HasMaxLength(100);
             recipe.Property(r => r.Description).IsRequired().HasMaxLength(300);
             recipe.Property(r => r.UserId).IsRequired();
 
-            // Mapear value object RecipeImageURL
-            recipe.OwnsOne(r => r.ImageUrl, img =>
-            {
-                img.Property(p => p.Value).HasColumnName("image_url").IsRequired();
-            });
+            recipe.Property(r => r.ImageUrl)
+                .HasConversion(img => img.Value, value => new RecipeImageURL(value))
+                .HasColumnName("image_url")
+                .IsRequired();
 
-            // Mapear value object RecipePrice
-            recipe.OwnsOne(r => r.TotalPrice, price =>
-            {
-                price.Property(p => p.Value).HasColumnName("total_price").IsRequired();
-            });
+            recipe.Property(r => r.TotalPrice)
+                .HasConversion(p => p.Value, value => new RecipePrice(value))
+                .HasColumnName("total_price")
+                .IsRequired();
 
-            // Relación con RecipeSupply
+            recipe.Ignore(r => r.Supplies);
+
             recipe.HasMany(typeof(RecipeSupply), "_supplies")
-                  .WithOne()
-                  .HasForeignKey("recipe_id")
-                  .OnDelete(DeleteBehavior.Cascade);
+                .WithOne()
+                .HasForeignKey("recipe_id")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // ---------------- RECIPE SUPPLY ----------------
+        // ========== RecipeSupply ==========
         builder.Entity<RecipeSupply>(rs =>
         {
-            rs.HasKey("recipe_id", "supply_id"); // Clave compuesta
+            rs.HasKey(r => new { r.RecipeId, r.SupplyId });
 
-            // Mapear value object RecipeId
-            rs.OwnsOne(r => r.RecipeId, rid =>
-            {
-                rid.Property(p => p.Value).HasColumnName("recipe_id");
-            });
+            rs.Property(r => r.RecipeId)
+                .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value))
+                .HasColumnName("recipe_id");
 
-            // Mapear value object SupplyId
-            rs.OwnsOne(r => r.SupplyId, sid =>
-            {
-                sid.Property(p => p.Value).HasColumnName("supply_id");
-            });
+            rs.Property(r => r.SupplyId)
+                .HasConversion(sid => sid.Value, value => new SupplyIdentifier(value))
+                .HasColumnName("supply_id");
 
-            // Mapear value object Quantity
-            rs.OwnsOne(r => r.Quantity, qty =>
-            {
-                qty.Property(p => p.Value).HasColumnName("quantity");
-            });
+            rs.Property(r => r.Quantity)
+                .HasConversion(q => q.Value, value => new RecipeQuantity(value))
+                .HasColumnName("quantity");
         });
     }
+
 }
 
