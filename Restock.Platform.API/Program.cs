@@ -3,6 +3,11 @@ using Restock.Platform.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Restock.Platform.API.Planning.Application.Internal.CommandServices;
+using Restock.Platform.API.Planning.Application.Internal.QueryServices;
+using Restock.Platform.API.Planning.Domain.Repositories;
+using Restock.Platform.API.Planning.Domain.Services;
+using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,16 +55,38 @@ builder.Services.AddSwaggerGen(options => {
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Planning Bounded Context
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IRecipeCommandService, RecipeCommandService>();
+builder.Services.AddScoped<IRecipeQueryService, RecipeQueryService>();
+
 var app = builder.Build();
 
 // Verify if the database exists and create it if it doesn't
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    context.Database.EnsureCreated();
+    try
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            context.Database.EnsureCreated();
+        }
+        else
+        {
+            context.Database.Migrate();
+        }
+
+        Console.WriteLine("✅ Database setup complete.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error initializing database: {ex.Message}");
+        throw;
+    }
 }
+
 
 // Use Swagger for API documentation if in development mode
 if (app.Environment.IsDevelopment())
