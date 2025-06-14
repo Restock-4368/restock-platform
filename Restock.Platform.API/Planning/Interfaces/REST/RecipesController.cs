@@ -18,8 +18,8 @@ public class RecipesController(
 {
     [HttpGet("{recipeId:guid}")]
     [SwaggerOperation(
-        Summary = "Get All Recipes",
-        Description = "Returns a list of all available recipes.",
+        Summary = "Get Recipe by Id",
+        Description = "Returns a recipe.",
         OperationId = "GetAllRecipes")]
     [SwaggerResponse(StatusCodes.Status200OK, "Recipes found", typeof(RecipeResource))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "No recipes found.")]

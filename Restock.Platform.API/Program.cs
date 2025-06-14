@@ -65,17 +65,25 @@ var app = builder.Build();
 // Verify if the database exists and create it if it doesn't
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
     try
     {
-        var context = services.GetRequiredService<AppDbContext>();
-        Console.WriteLine("🔧 Starting automatic migration...");
-        context.Database.Migrate();
-        Console.WriteLine("✅ Migration completed.");
+        if (app.Environment.IsDevelopment())
+        {
+            context.Database.EnsureCreated();
+        }
+        else
+        {
+            context.Database.Migrate();
+        }
+
+        Console.WriteLine("✅ Database setup complete.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ Migration failed: {ex.Message}");
+        Console.WriteLine($"❌ Error initializing database: {ex.Message}");
+        throw;
     }
 }
 
