@@ -18,12 +18,12 @@ public class RecipeCommandService(
             new RecipeIdentifier(),
             command.Name,
             command.Description,
-            new RecipeImageURL(),
-            new RecipePrice(),
+            new RecipeImageURL(command.ImageUrl),
+            new RecipePrice(command.TotalPrice),
             command.UserId);
 
         var supplies = command.Supplies.Select(s =>
-            (new RecipeIdentifier(), new SupplyIdentifier(), new RecipeQuantity())
+            (recipe.Id, new SupplyIdentifier(s.SupplyId), new RecipeQuantity(s.Quantity))
         );
         
         recipe.ReplaceSupplies(supplies);
@@ -42,11 +42,11 @@ public class RecipeCommandService(
         existing.Update(
             command.Name,
             command.Description,
-            new RecipeImageURL(),
-            new RecipePrice());
+            new RecipeImageURL(command.ImageUrl),
+            new RecipePrice(command.TotalPrice));
 
         var newSupplies = command.Supplies.Select(s =>
-            (new RecipeIdentifier(), new SupplyIdentifier(), new RecipeQuantity()));
+            (existing.Id, new SupplyIdentifier(s.SupplyId), new RecipeQuantity(s.Quantity)));
         
         existing.ReplaceSupplies(newSupplies);
         

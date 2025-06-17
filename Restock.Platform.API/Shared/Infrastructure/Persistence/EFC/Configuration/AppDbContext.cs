@@ -25,13 +25,15 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.UseSnakeCaseNamingConvention();
 
         // ========== Recipe ==========
         builder.Entity<Recipe>(recipe =>
         {
+            recipe.ToTable("recipes");
+            
             recipe.HasKey(r => r.Id);
             recipe.Property(r => r.Id)
+                .HasColumnName("id")
                 .HasConversion(id => id.Value, value => new RecipeIdentifier(value))
                 .ValueGeneratedNever(); 
 
@@ -49,9 +51,11 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 .HasColumnName("total_price")
                 .IsRequired();
 
-            recipe.Ignore(r => r.Supplies);
+            recipe.Metadata
+                .FindNavigation(nameof(Recipe.Supplies))!
+                .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            recipe.HasMany(typeof(RecipeSupply), "_supplies")
+            recipe.HasMany(r => r.Supplies)
                 .WithOne()
                 .HasForeignKey("recipe_id")
                 .OnDelete(DeleteBehavior.Cascade);
@@ -60,6 +64,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         // ========== RecipeSupply ==========
         builder.Entity<RecipeSupply>(rs =>
         {
+            rs.ToTable("recipe_supplies");
+            
             rs.HasKey(r => new { r.RecipeId, r.SupplyId });
 
             rs.Property(r => r.RecipeId)
@@ -73,7 +79,15 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             rs.Property(r => r.Quantity)
                 .HasConversion(q => q.Value, value => new RecipeQuantity(value))
                 .HasColumnName("quantity");
+            
+            rs.HasOne<Recipe>()
+                .WithMany()
+                .HasForeignKey(rs => rs.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
+        
+        builder.UseSnakeCaseNamingConvention();
+
     }
 
 }
