@@ -29,11 +29,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         // ========== Recipe ==========
         builder.Entity<Recipe>(recipe =>
         {
-            recipe.ToTable("recipes");
-            
             recipe.HasKey(r => r.Id);
             recipe.Property(r => r.Id)
-                .HasColumnName("id")
                 .HasConversion(id => id.Value, value => new RecipeIdentifier(value))
                 .ValueGeneratedNever(); 
 
@@ -51,22 +48,24 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 .HasColumnName("total_price")
                 .IsRequired();
 
-            recipe.Metadata
-                .FindNavigation(nameof(Recipe.Supplies))!
-                .SetPropertyAccessMode(PropertyAccessMode.Field);
-
+            recipe.Navigation(r => r.Supplies)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+            
             recipe.HasMany(r => r.Supplies)
-                .WithOne()
-                .HasForeignKey("recipe_id")
+                .WithOne(rs => rs.Recipe)
+                .HasForeignKey(rs => rs.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         // ========== RecipeSupply ==========
         builder.Entity<RecipeSupply>(rs =>
         {
-            rs.ToTable("recipe_supplies");
-            
             rs.HasKey(r => new { r.RecipeId, r.SupplyId });
+
+            rs.HasOne(r => r.Recipe)
+                .WithMany("_supplies")
+                .HasForeignKey(r => r.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             rs.Property(r => r.RecipeId)
                 .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value))
@@ -80,10 +79,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 .HasConversion(q => q.Value, value => new RecipeQuantity(value))
                 .HasColumnName("quantity");
             
-            rs.HasOne<Recipe>()
-                .WithMany()
-                .HasForeignKey(rs => rs.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
         
         builder.UseSnakeCaseNamingConvention();
