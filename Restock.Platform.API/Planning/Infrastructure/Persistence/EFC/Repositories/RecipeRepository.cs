@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restock.Platform.API.Planning.Domain.Model.Aggregates;
+using Restock.Platform.API.Planning.Domain.Model.ValueObjects;
 using Restock.Platform.API.Planning.Domain.Repositories;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Repositories;
@@ -8,17 +9,17 @@ namespace Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositor
 
 public class RecipeRepository(AppDbContext context) : BaseRepository<Recipe>(context), IRecipeRepository
 {
-    public async Task<Recipe?> FindByIdAsync(Guid id)
+    public new async Task<Recipe?> FindByIdAsync(Guid id)
     {
         return await Context.Set<Recipe>()
-            .Include("_supplies")
-            .FirstOrDefaultAsync(r => r.Id.Value == id);
+            .Include(r => r.Supplies)
+            .FirstOrDefaultAsync(r => r.Id == new RecipeIdentifier(id));
     }
 
-    public async Task<IEnumerable<Recipe>> ListAsync()
+    public new async Task<IEnumerable<Recipe>> ListAsync()
     {
         return await Context.Set<Recipe>()
-            .Include("_supplies")
+            .Include(r => r.Supplies)
             .ToListAsync();
     }
 }

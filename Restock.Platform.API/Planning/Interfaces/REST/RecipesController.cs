@@ -78,12 +78,25 @@ public class RecipesController(
             resource.Name,
             resource.Description,
             resource.ImageUrl,
-            resource.TotalPrice,
-            resource.Supplies.Select(s => new SupplyInput(s.SupplyId, s.Quantity))
+            resource.TotalPrice
         );
 
         await recipeCommandService.Handle(updateRecipeCommand);
         return NoContent();
+    }
+
+    [HttpPost("{recipeId:guid}/supplies")]
+    [SwaggerOperation(
+        Summary = "Add Supply to Recipe",
+        Description = "Adds a supply to a recipe.",
+        OperationId = "AddSupplyToRecipe")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Supply added successfully")]
+    public async Task<IActionResult> AddSupplyToRecipe([FromRoute] Guid recipeId,
+        [FromBody] AddRecipeSupplyResource resource)
+    {
+        var command = new AddRecipeSupplyCommand(recipeId, resource.SupplyId, resource.Quantity);
+        await recipeCommandService.Handle(command);
+        return Ok();
     }
     
     [HttpDelete("{recipeId:guid}")]

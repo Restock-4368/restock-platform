@@ -1,5 +1,6 @@
 ﻿using Restock.Platform.API.Planning.Domain.Model.Aggregates;
 using Restock.Platform.API.Planning.Domain.Model.Commands;
+using Restock.Platform.API.Planning.Domain.Model.Entities;
 using Restock.Platform.API.Planning.Domain.Model.ValueObjects;
 using Restock.Platform.API.Planning.Domain.Repositories;
 using Restock.Platform.API.Planning.Domain.Services;
@@ -21,13 +22,7 @@ public class RecipeCommandService(
             new RecipeImageURL(command.ImageUrl),
             new RecipePrice(command.TotalPrice),
             command.UserId);
-
-        var supplies = command.Supplies.Select(s =>
-            (recipe.Id, new SupplyIdentifier(s.SupplyId), new RecipeQuantity(s.Quantity))
-        );
         
-        recipe.ReplaceSupplies(supplies);
-
         await recipeRepository.AddAsync(recipe);
         await unitOfWork.CompleteAsync();
 
@@ -44,11 +39,6 @@ public class RecipeCommandService(
             command.Description,
             new RecipeImageURL(command.ImageUrl),
             new RecipePrice(command.TotalPrice));
-
-        var newSupplies = command.Supplies.Select(s =>
-            (existing.Id, new SupplyIdentifier(s.SupplyId), new RecipeQuantity(s.Quantity)));
-        
-        existing.ReplaceSupplies(newSupplies);
         
         recipeRepository.Update(existing);  
         await unitOfWork.CompleteAsync();
@@ -60,6 +50,20 @@ public class RecipeCommandService(
         if (existing == null) throw new KeyNotFoundException("Recipe not found");
 
         recipeRepository.Remove(existing);
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(AddRecipeSupplyCommand command)
+    {
+        var recipe = await recipeRepository.FindByIdAsync(command.RecipeId);
+        if (recipe is null) 
+            throw new KeyNotFoundException("Recipe not found");
+        recipe.AddSupply(
+            recipe.Id,
+            new SupplyIdentifier(command.SupplyId), 
+            new RecipeQuantity(command.Quantity));
+
+        recipeRepository.Update(recipe); 
         await unitOfWork.CompleteAsync();
     }
 }
