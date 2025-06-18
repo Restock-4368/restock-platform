@@ -7,5 +7,4 @@ public record CreateRecipeCommand(
     string Description, 
     string ImageUrl, 
     decimal TotalPrice, 
-    int UserId,
-    IEnumerable<SupplyInput> Supplies);
+    int UserId);
