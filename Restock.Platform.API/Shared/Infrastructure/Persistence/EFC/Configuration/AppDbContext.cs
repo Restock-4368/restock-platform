@@ -11,7 +11,7 @@ namespace Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configurati
 /// <summary>
 ///     Application database context
 /// </summary>
-public class AppDbContext(DbContextOptions options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<RecipeSupply> RecipeSupplies { get; set; }
@@ -61,11 +61,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<RecipeSupply>(rs =>
         {
             rs.HasKey(r => new { r.RecipeId, r.SupplyId });
-
-            rs.HasOne(r => r.Recipe)
-                .WithMany("_supplies")
-                .HasForeignKey(r => r.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             rs.Property(r => r.RecipeId)
                 .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value))
