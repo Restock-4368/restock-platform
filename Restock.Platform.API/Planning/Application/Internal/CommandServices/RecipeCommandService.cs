@@ -55,7 +55,7 @@ public class RecipeCommandService(
 
     public async Task Handle(AddRecipeSupplyCommand command)
     {
-        var recipe = await recipeRepository.FindByIdAsync(command.RecipeId);
+        var recipe = await recipeRepository.FindByIdAsync(command.RecipeId, includeSupplies: true);
         if (recipe is null) 
             throw new KeyNotFoundException("Recipe not found");
         recipe.AddSupply(
@@ -64,6 +64,29 @@ public class RecipeCommandService(
             new RecipeQuantity(command.Quantity));
 
         recipeRepository.Update(recipe); 
+        await unitOfWork.CompleteAsync();
+    }
+    
+    public async Task Handle(UpdateRecipeSupplyCommand command)
+    {
+        var recipe = await recipeRepository.FindByIdAsync(command.RecipeId, includeSupplies: true);
+        if (recipe is null) throw new KeyNotFoundException("Recipe not found");
+
+        var supply = recipe.Supplies.FirstOrDefault(s => s.SupplyId == new SupplyIdentifier(command.SupplyId));
+        if (supply is null) throw new KeyNotFoundException("Supply not found in recipe");
+
+        supply.UpdateQuantity(new RecipeQuantity(command.Quantity));
+        recipeRepository.Update(recipe);
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(DeleteRecipeSupplyCommand command)
+    {
+        var recipe = await recipeRepository.FindByIdAsync(command.RecipeId, includeSupplies: true);
+        if (recipe is null) throw new KeyNotFoundException("Recipe not found");
+
+        recipe.RemoveSupply(new SupplyIdentifier(command.SupplyId));
+        recipeRepository.Update(recipe);
         await unitOfWork.CompleteAsync();
     }
 }
