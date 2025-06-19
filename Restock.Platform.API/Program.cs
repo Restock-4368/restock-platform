@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Restock.Platform.API.Shared.Domain.Repositories;
 using Restock.Platform.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -16,7 +17,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add ASP.NET Core MVC with Kebab Case Route Naming Convention
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
+builder.Services.AddControllers(
+    options => options.Conventions.Add(new KebabCaseRouteNamingConvention())
+    )
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 
 // Add CORS Policy

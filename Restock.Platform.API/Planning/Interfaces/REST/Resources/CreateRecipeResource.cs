@@ -3,7 +3,7 @@
 
 public record CreateRecipeResource(
     string Name,
-    string Description,
+    string? Description,
     string ImageUrl,
     decimal TotalPrice,
     int UserId

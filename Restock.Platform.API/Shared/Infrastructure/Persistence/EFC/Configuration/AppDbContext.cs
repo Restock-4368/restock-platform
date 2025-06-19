@@ -35,17 +35,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .ValueGeneratedNever(); 
 
             recipe.Property(r => r.Name).IsRequired().HasMaxLength(100);
-            recipe.Property(r => r.Description).IsRequired().HasMaxLength(300);
+            recipe.Property(r => r.Description).IsRequired(false).HasMaxLength(300);
             recipe.Property(r => r.UserId).IsRequired();
 
             recipe.Property(r => r.ImageUrl)
-                .HasConversion(img => img.Value, value => new RecipeImageURL(value))
                 .HasColumnName("image_url")
+                .HasConversion(img => img.Value, value => new RecipeImageURL(value))
                 .IsRequired();
 
             recipe.Property(r => r.TotalPrice)
-                .HasConversion(p => p.Value, value => new RecipePrice(value))
                 .HasColumnName("total_price")
+                .HasConversion(p => p.Value, value => new RecipePrice(value))
                 .IsRequired();
 
             recipe.Navigation(r => r.Supplies)
@@ -63,17 +63,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             rs.HasKey(r => new { r.RecipeId, r.SupplyId });
 
             rs.Property(r => r.RecipeId)
-                .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value))
-                .HasColumnName("recipe_id");
+                .HasColumnName("recipe_id")
+                .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value));
 
             rs.Property(r => r.SupplyId)
-                .HasConversion(sid => sid.Value, value => new SupplyIdentifier(value))
-                .HasColumnName("supply_id");
+                .HasColumnName("supply_id")
+                .HasConversion(sid => sid.Value, value => new SupplyIdentifier(value));
 
             rs.Property(r => r.Quantity)
-                .HasConversion(q => q.Value, value => new RecipeQuantity(value))
-                .HasColumnName("quantity");
-            
+                .HasColumnName("quantity")
+                .HasConversion(q => q.Value, value => new RecipeQuantity(value));
+
         });
         
         builder.UseSnakeCaseNamingConvention();
