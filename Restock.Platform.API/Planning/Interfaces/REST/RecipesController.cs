@@ -23,12 +23,13 @@ public class RecipesController(
         OperationId = "GetAllRecipes")]
     [SwaggerResponse(StatusCodes.Status200OK, "Recipes found", typeof(RecipeResource))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "No recipes found.")]
-    public async Task<IActionResult> GetRecipeById([FromRoute] Guid recipeId)
+    public async Task<IActionResult> GetRecipeById([FromRoute] Guid recipeId, [FromQuery] string? include)
     {
-        var recipe = await recipeQueryService.GetByIdAsync(recipeId);
+        var withSupplies = string.Equals(include, "supplies", StringComparison.OrdinalIgnoreCase);
+        var recipe = await recipeQueryService.GetByIdAsync(recipeId, withSupplies);
         if (recipe is null) return NotFound();
 
-        var resource = RecipeResourceFromEntityAssembler.ToResource(recipe);
+        var resource = RecipeResourceFromEntityAssembler.ToResource(recipe, withSupplies);
         return Ok(resource);
     }
 
@@ -38,10 +39,11 @@ public class RecipesController(
         Description = "Returns a list of all available recipes.",
         OperationId = "GetAllRecipes")]
     [SwaggerResponse(StatusCodes.Status200OK, "List of recipes", typeof(IEnumerable<RecipeResource>))]
-    public async Task<IActionResult> GetAllRecipes()
+    public async Task<IActionResult> GetAllRecipes([FromQuery] string? include)
     {
-        var recipes = await recipeQueryService.ListAsync();
-        var resources = recipes.Select(RecipeResourceFromEntityAssembler.ToResource);
+        var withSupplies = string.Equals(include, "supplies", StringComparison.OrdinalIgnoreCase);
+        var recipes = await recipeQueryService.ListAsync(withSupplies);
+        var resources = recipes.Select(r => RecipeResourceFromEntityAssembler.ToResource(r, withSupplies));
         return Ok(resources);
     }
 
@@ -78,11 +80,64 @@ public class RecipesController(
             resource.Name,
             resource.Description,
             resource.ImageUrl,
-            resource.TotalPrice,
-            resource.Supplies.Select(s => new SupplyInput(s.SupplyId, s.Quantity))
+            resource.TotalPrice
         );
 
         await recipeCommandService.Handle(updateRecipeCommand);
+        return NoContent();
+    }
+
+    [HttpPost("{recipeId:guid}/supplies")]
+    [SwaggerOperation(
+        Summary = "Add Supply to Recipe",
+        Description = "Adds a supply to a recipe.",
+        OperationId = "AddSupplyToRecipe")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Supply added successfully")]
+    public async Task<IActionResult> AddSupplyToRecipe([FromRoute] Guid recipeId,
+        [FromBody] AddRecipeSupplyResource resource)
+    {
+        var command = new AddRecipeSupplyCommand(recipeId, resource.SupplyId, resource.Quantity);
+        await recipeCommandService.Handle(command);
+        return Ok();
+    }
+    
+    [HttpGet("{recipeId:guid}/supplies")]
+    [SwaggerOperation(
+        Summary = "Get Supplies by Recipe Id",
+        Description = "Returns a list of supplies for a specific recipe.",
+        OperationId = "GetRecipeSupplies")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Supplies found", typeof(IEnumerable<RecipeSupplyResource>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "No supplies found for the recipe.")]
+    public async Task<IActionResult> GetRecipeSupplies([FromRoute] Guid recipeId)
+    {
+        var supplies = await recipeQueryService.ListSuppliesByRecipeIdAsync(recipeId);
+        var resources = supplies.Select(s => new RecipeSupplyResource(s.SupplyId.Value, s.Quantity.Value)).ToList();
+        return Ok(resources);
+    }
+
+    [HttpPut("{recipeId:guid}/supplies/{supplyId:guid}")]
+    [SwaggerOperation(
+        Summary = "Update Supply in Recipe by Id",
+        Description = "Updates the quantity of a supply in a recipe.",
+        OperationId = "UpdateRecipeSupply")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Supply updated successfully")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Recipe or supply not found")]
+    public async Task<IActionResult> UpdateRecipeSupply([FromRoute] Guid recipeId, [FromRoute] Guid supplyId, [FromBody] UpdateRecipeSupplyResource resource)
+    {
+        await recipeCommandService.Handle(new UpdateRecipeSupplyCommand(recipeId, supplyId, resource.Quantity));
+        return NoContent();
+    }
+
+    [HttpDelete("{recipeId:guid}/supplies/{supplyId:guid}")]
+    [SwaggerOperation(
+        Summary = "Delete Supply by Recipe and Supply Id",
+        Description =  "Deletes a supply from a recipe by its ID.",
+        OperationId = "DeleteRecipeSupply")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Supply deleted successfully")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Recipe or supply not found")]
+    public async Task<IActionResult> DeleteRecipeSupply([FromRoute] Guid recipeId, [FromRoute] Guid supplyId)
+    {
+        await recipeCommandService.Handle(new DeleteRecipeSupplyCommand(recipeId, supplyId));
         return NoContent();
     }
     

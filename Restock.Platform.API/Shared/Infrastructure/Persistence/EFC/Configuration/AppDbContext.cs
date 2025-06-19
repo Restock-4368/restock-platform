@@ -11,7 +11,7 @@ namespace Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configurati
 /// <summary>
 ///     Application database context
 /// </summary>
-public class AppDbContext(DbContextOptions options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<RecipeSupply> RecipeSupplies { get; set; }
@@ -25,7 +25,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.UseSnakeCaseNamingConvention();
 
         // ========== Recipe ==========
         builder.Entity<Recipe>(recipe =>
@@ -36,24 +35,25 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 .ValueGeneratedNever(); 
 
             recipe.Property(r => r.Name).IsRequired().HasMaxLength(100);
-            recipe.Property(r => r.Description).IsRequired().HasMaxLength(300);
+            recipe.Property(r => r.Description).IsRequired(false).HasMaxLength(300);
             recipe.Property(r => r.UserId).IsRequired();
 
             recipe.Property(r => r.ImageUrl)
-                .HasConversion(img => img.Value, value => new RecipeImageURL(value))
                 .HasColumnName("image_url")
+                .HasConversion(img => img.Value, value => new RecipeImageURL(value))
                 .IsRequired();
 
             recipe.Property(r => r.TotalPrice)
-                .HasConversion(p => p.Value, value => new RecipePrice(value))
                 .HasColumnName("total_price")
+                .HasConversion(p => p.Value, value => new RecipePrice(value))
                 .IsRequired();
 
-            recipe.Ignore(r => r.Supplies);
-
-            recipe.HasMany(typeof(RecipeSupply), "_supplies")
-                .WithOne()
-                .HasForeignKey("recipe_id")
+            recipe.Navigation(r => r.Supplies)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+            
+            recipe.HasMany(r => r.Supplies)
+                .WithOne(rs => rs.Recipe)
+                .HasForeignKey(rs => rs.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -63,17 +63,21 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             rs.HasKey(r => new { r.RecipeId, r.SupplyId });
 
             rs.Property(r => r.RecipeId)
-                .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value))
-                .HasColumnName("recipe_id");
+                .HasColumnName("recipe_id")
+                .HasConversion(rid => rid.Value, value => new RecipeIdentifier(value));
 
             rs.Property(r => r.SupplyId)
-                .HasConversion(sid => sid.Value, value => new SupplyIdentifier(value))
-                .HasColumnName("supply_id");
+                .HasColumnName("supply_id")
+                .HasConversion(sid => sid.Value, value => new SupplyIdentifier(value));
 
             rs.Property(r => r.Quantity)
-                .HasConversion(q => q.Value, value => new RecipeQuantity(value))
-                .HasColumnName("quantity");
+                .HasColumnName("quantity")
+                .HasConversion(q => q.Value, value => new RecipeQuantity(value));
+
         });
+        
+        builder.UseSnakeCaseNamingConvention();
+
     }
 
 }
