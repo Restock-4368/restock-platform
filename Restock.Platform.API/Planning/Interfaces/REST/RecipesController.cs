@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Restock.Platform.API.Planning.Domain.Model.Commands;
 using Restock.Platform.API.Planning.Domain.Services;
@@ -89,15 +90,20 @@ public class RecipesController(
 
     [HttpPost("{recipeId:guid}/supplies")]
     [SwaggerOperation(
-        Summary = "Add Supply to Recipe",
-        Description = "Adds a supply to a recipe.",
-        OperationId = "AddSupplyToRecipe")]
-    [SwaggerResponse(StatusCodes.Status201Created, "Supply added successfully")]
-    public async Task<IActionResult> AddSupplyToRecipe([FromRoute] Guid recipeId,
-        [FromBody] AddRecipeSupplyResource resource)
+        Summary = "Add Supplies to Recipe",
+        Description = "Adds multiple supplies to a recipe.",
+        OperationId = "AddSuppliesToRecipe")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Supplies added successfully")]
+    public async Task<IActionResult> AddSuppliesToRecipe(
+        [FromRoute] Guid recipeId,
+        [FromBody] List<AddRecipeSupplyResource> supplies)
     {
-        var command = new AddRecipeSupplyCommand(recipeId, resource.SupplyId, resource.Quantity);
-        await recipeCommandService.Handle(command);
+        foreach (var s in supplies)
+        {
+            var command = new AddRecipeSupplyCommand(recipeId, s.SupplyId, s.Quantity);
+            await recipeCommandService.Handle(command);
+        }
+
         return Ok();
     }
     
@@ -115,27 +121,27 @@ public class RecipesController(
         return Ok(resources);
     }
 
-    [HttpPut("{recipeId:guid}/supplies/{supplyId:guid}")]
+    [HttpPut("{recipeId:guid}/supplies/{supplyId:int}")]
     [SwaggerOperation(
         Summary = "Update Supply in Recipe by Id",
         Description = "Updates the quantity of a supply in a recipe.",
         OperationId = "UpdateRecipeSupply")]
     [SwaggerResponse(StatusCodes.Status200OK, "Supply updated successfully")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Recipe or supply not found")]
-    public async Task<IActionResult> UpdateRecipeSupply([FromRoute] Guid recipeId, [FromRoute] Guid supplyId, [FromBody] UpdateRecipeSupplyResource resource)
+    public async Task<IActionResult> UpdateRecipeSupply([FromRoute] Guid recipeId, [FromRoute] int supplyId, [FromBody] UpdateRecipeSupplyResource resource)
     {
         await recipeCommandService.Handle(new UpdateRecipeSupplyCommand(recipeId, supplyId, resource.Quantity));
         return NoContent();
     }
 
-    [HttpDelete("{recipeId:guid}/supplies/{supplyId:guid}")]
+    [HttpDelete("{recipeId:guid}/supplies/{supplyId:int}")]
     [SwaggerOperation(
         Summary = "Delete Supply by Recipe and Supply Id",
         Description =  "Deletes a supply from a recipe by its ID.",
         OperationId = "DeleteRecipeSupply")]
     [SwaggerResponse(StatusCodes.Status200OK, "Supply deleted successfully")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Recipe or supply not found")]
-    public async Task<IActionResult> DeleteRecipeSupply([FromRoute] Guid recipeId, [FromRoute] Guid supplyId)
+    public async Task<IActionResult> DeleteRecipeSupply([FromRoute] Guid recipeId, [FromRoute] int supplyId)
     {
         await recipeCommandService.Handle(new DeleteRecipeSupplyCommand(recipeId, supplyId));
         return NoContent();
