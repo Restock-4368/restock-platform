@@ -1,7 +1,7 @@
 ﻿namespace Restock.Platform.API.Planning.Interfaces.REST.Resources;
 
 public record RecipeSupplyResource(
-    Guid SupplyId,
+    int SupplyId,
     double Quantity
 );
 
