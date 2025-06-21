@@ -34,4 +34,4 @@ WORKDIR /app
 COPY --from=builder /app/out .
 EXPOSE 80
 # Set EntryPoint to run the application
-ENTRYPOINT ["dotnet", "CatchUpPlatform.API.dll"]
+ENTRYPOINT ["dotnet", "Restock.Platform.API.dll"]
