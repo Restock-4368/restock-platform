@@ -73,35 +73,17 @@ var app = builder.Build();
 // Verify if the database exists and create it if it doesn't
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    try
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            context.Database.EnsureCreated();
-        }
-        else
-        {
-            context.Database.Migrate();
-        }
-
-        Console.WriteLine("✅ Database setup complete.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Error initializing database: {ex.Message}");
-        throw;
-    }
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>(); 
+    context.Database.EnsureCreated();
 }
 
 
 // Use Swagger for API documentation if in development mode
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+     app.UseSwagger();
+     app.UseSwaggerUI();
+// }
 
 // Apply CORS Policy
 app.UseCors("AllowAllPolicy");
