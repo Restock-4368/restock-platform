@@ -15,15 +15,15 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
 WORKDIR /app
 # Copy the project files
 # Copy the project files and restore dependencies
-COPY CatchUpPlatform.API/*.csproj CatchUpPlatform.API/
+COPY Restock.Platform.API/*.csproj Restock.Platform.API/
 # Restore dependencies
-RUN dotnet restore ./CatchUpPlatform.API
+RUN dotnet restore ./Restock.Platform.API
 # Copy the rest of the application files
 COPY . .
 
 # Step 2: Deploy the application to builder stage
 # Publish the application in Release mode
-RUN dotnet publish ./CatchUpPlatform.API -c Release -o out
+RUN dotnet publish ./Restock.Platform.API -c Release -o out
 
 # Step 3: Publish to Production and Run the application
 # Use the official .NET runtime image to run the application
@@ -34,4 +34,4 @@ WORKDIR /app
 COPY --from=builder /app/out .
 EXPOSE 80
 # Set EntryPoint to run the application
-ENTRYPOINT ["dotnet", "CatchUpPlatform.API.dll"]
+ENTRYPOINT ["dotnet", "Restock.Platform.API.dll"]
