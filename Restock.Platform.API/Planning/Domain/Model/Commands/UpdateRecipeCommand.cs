@@ -5,6 +5,5 @@ public record UpdateRecipeCommand(
     string Name,
     string Description,
     string ImageUrl,
-    decimal TotalPrice,
-    IEnumerable<SupplyInput> Supplies
+    decimal TotalPrice
 );

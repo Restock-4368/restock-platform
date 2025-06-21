@@ -1,8 +1,8 @@
 ﻿namespace Restock.Platform.API.Resource.Domain.Model.ValueObjects;
 
-public record SupplyIdentifier(Guid Value)
+public record SupplyIdentifier(int Value)
 {
-    public SupplyIdentifier() : this(Guid.NewGuid())
+    public SupplyIdentifier() : this(0)
     {
     }
 }
