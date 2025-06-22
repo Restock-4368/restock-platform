@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add ASP.NET Core MVC with Kebab Case Route Naming Convention
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 builder.Services.AddControllers(
     options => options.Conventions.Add(new KebabCaseRouteNamingConvention())
     )
@@ -26,6 +27,7 @@ builder.Services.AddControllers(
     });
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options => options.EnableAnnotations());
 
 // Add CORS Policy
 builder.Services.AddCors(options =>
@@ -41,17 +43,24 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 if (connectionString == null) throw new InvalidOperationException("Connection string not found.");
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    if (builder.Environment.IsDevelopment())
-        options.UseMySQL(connectionString)
-            .LogTo(Console.WriteLine, LogLevel.Information)
-            .EnableSensitiveDataLogging()
-            .EnableDetailedErrors();
-    else if (builder.Environment.IsProduction())
-        options.UseMySQL(connectionString)
-            .LogTo(Console.WriteLine, LogLevel.Error);
-});
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddDbContext<AppDbContext>(
+        options =>
+        {
+            options.UseMySQL(connectionString)
+                .LogTo(Console.WriteLine, LogLevel.Information)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
+        });
+else if (builder.Environment.IsProduction())
+    builder.Services.AddDbContext<AppDbContext>(
+        options =>
+        {
+            options.UseMySQL(connectionString)
+                .LogTo(Console.WriteLine, LogLevel.Error)
+                .EnableDetailedErrors();
+        });
+
 
 // Add Swagger/OpenAPI support
 builder.Services.AddSwaggerGen(options => {
@@ -73,7 +82,8 @@ var app = builder.Build();
 // Verify if the database exists and create it if it doesn't
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>(); 
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
 }
 
