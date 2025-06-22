@@ -1,8 +1,8 @@
-﻿# Dockerfile for CatchUpPlatform.API
+﻿# Dockerfile for RestockPlatform.API
 # Summary: 
-# This Dockerfile builds and runs the CatchUpPlatform.API application using .NET 9.0
+# This Dockerfile builds and runs the RestockPlatform.API application using .NET 9.0
 # Description:
-# This Dockerfile is designed to create a Docker image for the CatchUpPlatform.API application.
+# This Dockerfile is designed to create a Docker image for the RestockPlatform.API application.
 # It uses a multi-stage build process to first compile the application using the .NET SDK,
 # and then run it using the .NET runtime. The final image is lightweight and contains only the necessary files to run the application.
 # Version: 1.0
