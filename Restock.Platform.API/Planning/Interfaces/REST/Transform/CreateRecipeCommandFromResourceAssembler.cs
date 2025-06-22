@@ -7,17 +7,12 @@ public static class CreateRecipeCommandFromResourceAssembler
 {
     public static CreateRecipeCommand ToCommand(CreateRecipeResource resource)
     {
-        var supplies = resource.Supplies
-            .Select(s => new SupplyInput(s.SupplyId, s.Quantity))
-            .ToList();
-
         return new CreateRecipeCommand(
             resource.Name,
             resource.Description,
             resource.ImageUrl,
             resource.TotalPrice,
-            resource.UserId,
-            supplies
+            resource.UserId
         );
     }
 }

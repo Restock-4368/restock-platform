@@ -1,9 +1,18 @@
 ﻿namespace Restock.Platform.API.Planning.Domain.Model.ValueObjects;
 
-public record RecipePrice(decimal Value)
+public record RecipePrice
 {
-    public RecipePrice() : this(0.0m)
+    public decimal Value { get; init; }
+
+    public RecipePrice()
     {
-        if (Value < 0) throw new ArgumentOutOfRangeException(nameof(Value), "Price cannot be negative.");
+        Value = 0.0m;
+    }
+
+    public RecipePrice(decimal value)
+    {
+        if (value < 0)
+            throw new ArgumentOutOfRangeException(nameof(value), "Price cannot be negative.");
+        Value = value;
     }
 }

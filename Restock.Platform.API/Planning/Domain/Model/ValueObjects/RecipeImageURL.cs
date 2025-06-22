@@ -1,12 +1,17 @@
 ﻿namespace Restock.Platform.API.Planning.Domain.Model.ValueObjects;
 
-public record RecipeImageURL(string Value)
+public record RecipeImageURL
 {
-    public RecipeImageURL() : this(string.Empty)
+    public string Value { get; init; }
+
+    public RecipeImageURL()
     {
-        if(string.IsNullOrWhiteSpace(Value) || !Uri.IsWellFormedUriString(Value, UriKind.Absolute))
-        {
-            throw new ArgumentException("Invalid URL format.", nameof(Value));
-        }
+        Value = string.Empty;
+    }
+    public RecipeImageURL(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || !Uri.IsWellFormedUriString(value, UriKind.Absolute))
+            throw new ArgumentException("Invalid URL format.", nameof(value));
+        Value = value;
     }
 }

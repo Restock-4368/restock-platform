@@ -1,9 +1,17 @@
 ﻿namespace Restock.Platform.API.Planning.Domain.Model.ValueObjects;
 
-public record RecipeQuantity(double Value)
+public record RecipeQuantity
 {
-    public RecipeQuantity () : this(0.0)
+    public double Value { get; init; }
+
+    public RecipeQuantity()
     {
-        if (Value <= 0) throw new ArgumentOutOfRangeException("Quantity must be positive.", nameof(Value));
+        Value = 0.0;
+    }
+    public RecipeQuantity(double value)
+    {
+        if (value <= 0)
+            throw new ArgumentOutOfRangeException(nameof(value), "Quantity must be positive.");
+        Value = value;
     }
 }

@@ -9,7 +9,7 @@ public class Recipe
 {
     public RecipeIdentifier Id { get; private set; }
     public string Name { get; private set; }
-    public string Description { get; private set; }
+    public string? Description { get; private set; }
     public RecipeImageURL ImageUrl { get; private set; }
     public RecipePrice TotalPrice { get; private set; }
     public int UserId { get; private set; }
@@ -19,7 +19,7 @@ public class Recipe
     
     protected Recipe() {}
     
-    public Recipe(RecipeIdentifier id, string name, string description, RecipeImageURL imageUrl, RecipePrice totalPrice, int userId)
+    public Recipe(RecipeIdentifier id, string name, string? description, RecipeImageURL imageUrl, RecipePrice totalPrice, int userId)
     {
         Id = id;
         Name = name;
