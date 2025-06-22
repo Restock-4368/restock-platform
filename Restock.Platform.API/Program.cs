@@ -13,6 +13,13 @@ using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(int.Parse(port));
+});
+
 // Add services to the container.
 
 // Add ASP.NET Core MVC with Kebab Case Route Naming Convention
