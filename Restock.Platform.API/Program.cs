@@ -14,7 +14,6 @@ using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(int.Parse(port));
@@ -47,27 +46,19 @@ builder.Services.AddCors(options =>
 
 // Add Configuration for Entity Framework Core
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 if (connectionString == null) throw new InvalidOperationException("Connection string not found.");
 
 if (builder.Environment.IsDevelopment())
-    builder.Services.AddDbContext<AppDbContext>(
-        options =>
-        {
-            options.UseMySQL(connectionString)
-                .LogTo(Console.WriteLine, LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors();
-        });
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseMySQL(connectionString)
+            .LogTo(Console.WriteLine, LogLevel.Information)
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors());
 else if (builder.Environment.IsProduction())
-    builder.Services.AddDbContext<AppDbContext>(
-        options =>
-        {
-            options.UseMySQL(connectionString)
-                .LogTo(Console.WriteLine, LogLevel.Error)
-                .EnableDetailedErrors();
-        });
-
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseMySQL(connectionString)
+            .LogTo(Console.WriteLine, LogLevel.Error)
+            .EnableDetailedErrors());
 
 // Add Swagger/OpenAPI support
 builder.Services.AddSwaggerGen(options => {
@@ -105,7 +96,7 @@ using (var scope = app.Services.CreateScope())
 // Apply CORS Policy
 app.UseCors("AllowAllPolicy");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
