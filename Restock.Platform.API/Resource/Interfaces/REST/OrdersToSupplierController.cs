@@ -30,9 +30,9 @@ public class OrdersToSupplierController(
         
         if (order is null) {  return NotFound(); }
 
-        var resource = OrderResourceFromEntityAssembler.ToResourceFromEntity(order);
+        var orderResource = OrderResourceFromEntityAssembler.ToResourceFromEntity(order);
         
-        return Ok(order);
+        return Ok(orderResource); 
     }
 
     [HttpGet]
@@ -64,43 +64,40 @@ public class OrdersToSupplierController(
         return Ok(orderResources);
     }
     
-    // [HttpGet("{orderId:int}/batches")]
-    // [SwaggerOperation(
-    //     Summary = "Get Batches for Order",
-    //     Description = "Returns the batches associated with an order.",
-    //     OperationId = "GetOrderBatches")]
-    // [SwaggerResponse(StatusCodes.Status200OK, "Batches found", typeof(IEnumerable<BatchResource>))]
-    // [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
-    // public async Task<IActionResult> GetBatchesForOrder(int orderId)
-    // {
-    //     // var batches = await orderQueryService.Handle(new GetOrderBatchesByOrderIdQuery(orderId));
-    //     // var batchResources = batches.Select(b => new BatchResource(b.Id, b.SupplyId, b.Stock, b.ExpirationDate, b.UserId)); 
-    //     // return Ok(batchResources);
-    //     return BadRequest();
-    // }
-    //
-    // // [HttpGet("{orderId:int}/supplies")]
-    // // [SwaggerOperation(
-    // //     Summary = "Get Supplies for Order",
-    // //     Description = "Returns the supplies related to an order's batches.",
-    // //     OperationId = "GetOrderSupplies")]
-    // // [SwaggerResponse(StatusCodes.Status200OK, "Supplies found", typeof(IEnumerable<SupplyResource>))]
-    // // [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or supplies unavailable")]
-    // public async Task<IActionResult> GetSuppliesForOrder(int orderId)
-    // {
-    //     // var supplies = await orderQueryService.Handle(new GetOrderSuppliesQuery(orderId));
-    //     //
-    //     // // Si querés validar que haya supplies:
-    //     // if (supplies is null || !supplies.Any())
-    //     //     return NotFound();
-    //     //
-    //     // var supplyResources = supplies
-    //     //     .Select(SupplyResourceAssembler.ToResource);
-    //     //
-    //     // return Ok(supplyResources);
-    //     return BadRequest();
-    // }
-    //
+    [HttpGet("orders/{orderId:int}/batches")]
+    [SwaggerOperation(
+        Summary = "Get Batches for Order",
+        Description = "Returns the batches associated with an order.",
+        OperationId = "GetOrderBatches")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Batches found", typeof(IEnumerable<BatchResource>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> GetBatchesForOrder(int orderId)
+    {
+        var batches = await orderQueryService.Handle(new GetOrderBatchesByOrderIdQuery(orderId));
+        var batchResources = batches.Select(b => new BatchResource(b.BatchId, b.CustomSupplyId, b.CustomSupply, b.Stock, b.ExpirationDate, b.UserId)); 
+        return Ok(batchResources);
+    }
+    
+    [HttpGet("{orderId:int}/supplies")]
+    [SwaggerOperation(
+        Summary = "Get Supplies for Order",
+        Description = "Returns the supplies related to an order's batches.",
+        OperationId = "GetOrderSupplies")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Supplies found", typeof(IEnumerable<SupplyResource>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or supplies unavailable")]
+    public async Task<IActionResult> GetCustomSuppliesForOrder(int orderId)
+    {
+        var customSupplies = await orderQueryService.Handle(new GetOrderCustomSuppliesQuery(orderId));
+        
+        if (customSupplies is null)
+            return NotFound();
+        
+        var customSupplyResources = customSupplies
+            .Select(CustomSupplyResourceAssembler.ToResourceFromEntity);
+        
+        return Ok(customSupplyResources); 
+    }
+    
     [HttpPost]
     [SwaggerOperation(
         Summary = "Create a New Order to Supplier",

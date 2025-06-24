@@ -8,7 +8,7 @@ namespace Restock.Platform.API.Resource.Application.Internal.QueryServices;
 
 public class OrderQueryService(IOrderRepository orderRepository,
     IBatchRepository batchRepository,
-    ISupplyRepository supplyRepository) : IOrderQueryService
+    ICustomSupplyRepository customSupplyRepository) : IOrderQueryService
 {
     public async Task<OrderToSupplier?> Handle(GetOrderByIdQuery query)
     {
@@ -43,16 +43,16 @@ public class OrderQueryService(IOrderRepository orderRepository,
         return await batchRepository.ListByIdsAsync(batchIds);
     }
 
-    public async Task<IEnumerable<Supply>> Handle(GetOrderSuppliesByOrderIdQuery byOrderIdQuery)
+    public async Task<IEnumerable<CustomSupply>> Handle(GetOrderCustomSuppliesByOrderIdQuery byOrderIdQuery)
     {
         var order = await orderRepository.FindByIdAsync(byOrderIdQuery.OrderId);
-        if (order is null) return Enumerable.Empty<Supply>();
+        if (order is null) return Enumerable.Empty<CustomSupply>();
 
         var batchIds = order.RequestedBatches.Select(rb => rb.BatchId).Distinct().ToList();
         var batches = await batchRepository.ListByIdsAsync(batchIds);
 
-        var supplyIds = batches.Select(b => b.SupplyId).Distinct().ToList();
-        return await supplyRepository.ListByIdsAsync(supplyIds);
+        var customSupplyIds = batches.Select(b => b.CustomSupplyId).Distinct().ToList();
+        return await customSupplyRepository.ListByIdsAsync(customSupplyIds);
     }
  
     public async Task<OrderToSupplierBatch?> Handle(GetOrderToSupplierBatchByIdQuery query)

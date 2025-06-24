@@ -13,6 +13,6 @@ public interface IOrderQueryService
     
     Task<OrderToSupplierBatch?> Handle(GetOrderToSupplierBatchByIdQuery query);
     
-    Task<IEnumerable<Batch>> Handle(GetOrderBatchesByOrderIdQuery byOrderIdQuery);
-    Task<IEnumerable<Supply>> Handle(GetOrderSuppliesByOrderIdQuery byOrderIdQuery);
+    Task<IEnumerable<Batch>> Handle(GetOrderBatchesByOrderIdQuery query);
+    Task<IEnumerable<CustomSupply>> Handle(GetOrderCustomSuppliesByOrderIdQuery query);
 }
