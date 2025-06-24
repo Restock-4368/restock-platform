@@ -44,7 +44,6 @@
       <Folder Include="Monitoring\Infrastructure\" />
       <Folder Include="Monitoring\Interfaces\" />
       <Folder Include="Profiles\" />
-      <Folder Include="Resource\Infrastructure\" />
       <Folder Include="Subscription\" />
     </ItemGroup>
 
