@@ -1,3 +1,3 @@
 ﻿namespace Restock.Platform.API.Resource.Domain.Model.Queries;
 
-public record GetAllSuppliesQuery();
+public record GetOrderCustomSuppliesByOrderIdQuery(int OrderId);
