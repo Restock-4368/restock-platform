@@ -1,7 +1,7 @@
 ﻿namespace Restock.Platform.API.Resource.Domain.Model.Entities;
 
-public record OrderIdentifier(Guid Value)
+public record OrderIdentifier(int Value)
 {
-    public OrderIdentifier() : this(Guid.NewGuid()) {}
+    public OrderIdentifier() : this(0) {}
 
 }

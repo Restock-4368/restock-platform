@@ -1,7 +1,8 @@
 using Restock.Platform.API.Resource.Domain.Model.Commands;
+using Restock.Platform.API.Resource.Domain.Model.Entities;
 using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
 
-namespace Restock.Platform.API.Resource.Domain.Model.Entities;
+namespace Restock.Platform.API.Resource.Domain.Model.Aggregates;
 /// <summary>
 /// Represents a purchase order made to a supplier from a restaurant administration.
 /// </summary>
@@ -10,7 +11,7 @@ public class OrderToSupplier
     /// <summary>
     /// Gets or sets the unique identifier of the order.
     /// </summary>
-    public OrderIdentifier OrderId { get; set; }
+    public int OrderId { get; set; }
 
     /// <summary>
     /// Gets or sets the creation date of the order.
@@ -67,6 +68,13 @@ public class OrderToSupplier
     /// </summary>
     public bool PartiallyAccepted { get; set; } = false;
 
+    
+    
+    private readonly List<OrderToSupplierBatch> _resquestBatches = new();
+    public IReadOnlyCollection<OrderToSupplierBatch> RequestedBatches => _resquestBatches.AsReadOnly();
+
+    
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderToSupplier"/> class.
     /// </summary>
@@ -83,7 +91,7 @@ public class OrderToSupplier
                            string? description, int adminRestaurantId, int supplierId,
                            int requestedProductsCount, decimal totalPrice)
     {
-        OrderId = new OrderIdentifier(Guid.NewGuid());
+        OrderId = 0;
         Date = date;
         EstimatedShipDate = estimatedShipDate;
         EstimatedShipTime = estimatedShipTime;
@@ -108,11 +116,7 @@ public class OrderToSupplier
         command.TotalPrice
     ){}
     
-    
-    private readonly List<OrderToSupplierBatch> _resquestBatches = new();
-    public IReadOnlyCollection<OrderToSupplierBatch> Supplies => _resquestBatches.AsReadOnly();
-
-    public void AddOrderToSupplierBatch(OrderIdentifier orderId, int batchId, double quantity, bool accepted)
+    public void AddOrderToSupplierBatch(int orderId, int batchId, double quantity, bool accepted)
     {
         var existing = _resquestBatches.FirstOrDefault(s => s.BatchId == batchId);
 
