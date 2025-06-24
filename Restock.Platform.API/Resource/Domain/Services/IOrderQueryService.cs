@@ -7,11 +7,12 @@ namespace Restock.Platform.API.Resource.Domain.Services;
 public interface IOrderQueryService
 {
     Task<OrderToSupplier?> Handle(GetOrderByIdQuery query);
-    Task<IEnumerable<OrderToSupplier>> Handle(GetAllOrdersBySupplierIdQuery idQuery);
+    Task<IEnumerable<OrderToSupplier>> Handle(GetAllOrdersQuery query);
+    Task<IEnumerable<OrderToSupplier>> Handle(GetAllOrdersBySupplierIdQuery query);
     Task<IEnumerable<OrderToSupplierBatch>> Handle(GetOrderToSupplierBatchesByOrderIdQuery query);
     
     Task<OrderToSupplierBatch?> Handle(GetOrderToSupplierBatchByIdQuery query);
     
-    Task<IEnumerable<Batch>> Handle(GetOrderBatchesQuery query);
-    Task<IEnumerable<Supply>> Handle(GetOrderSuppliesQuery query);
+    Task<IEnumerable<Batch>> Handle(GetOrderBatchesByOrderIdQuery byOrderIdQuery);
+    Task<IEnumerable<Supply>> Handle(GetOrderSuppliesByOrderIdQuery byOrderIdQuery);
 }

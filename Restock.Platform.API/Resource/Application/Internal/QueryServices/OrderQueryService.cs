@@ -6,11 +6,18 @@ using Restock.Platform.API.Resource.Domain.Services;
 
 namespace Restock.Platform.API.Resource.Application.Internal.QueryServices;
 
-public class OrderQueryService(IOrderRepository orderRepository) : IOrderQueryService
+public class OrderQueryService(IOrderRepository orderRepository,
+    IBatchRepository batchRepository,
+    ISupplyRepository supplyRepository) : IOrderQueryService
 {
     public async Task<OrderToSupplier?> Handle(GetOrderByIdQuery query)
     {
         return await orderRepository.FindByIdAsync(query.OrderId);
+    }
+
+    public async Task<IEnumerable<OrderToSupplier>> Handle(GetAllOrdersQuery query)
+    {
+        return await orderRepository.ListAsync();
     }
 
     public async Task<IEnumerable<OrderToSupplier>> Handle(GetAllOrdersBySupplierIdQuery query)
@@ -22,28 +29,32 @@ public class OrderQueryService(IOrderRepository orderRepository) : IOrderQuerySe
     public async Task<IEnumerable<OrderToSupplierBatch>> Handle(GetOrderToSupplierBatchesByOrderIdQuery query)
     {
         var order = await orderRepository.FindByIdAsync(query.OrderId);
-        if (order is null) return null;
+        if (order is null) return Enumerable.Empty<OrderToSupplierBatch>();
 
         return order.RequestedBatches; 
     }
 
-    public Task<IEnumerable<Batch>> Handle(GetOrderBatchesQuery query)
+    public async Task<IEnumerable<Batch>> Handle(GetOrderBatchesByOrderIdQuery byOrderIdQuery)
     {
-        //var order = await orderRepository.FindByIdAsync(query.OrderId);
-        //if (order is null) return Enumerable.Empty<Batch>();
-        //
-        //// Debería haber una forma de acceder a los batches (desde otra capa o servicio)
-        //var batchIds = order.RequestedBatches.Select(rb => rb.BatchId).ToList();
-        //// Aquí debería consultar la base para obtener esos Batch. 
-        //return await batchRepository.ListByIdsAsync(batchIds);
-        throw new NotImplementedException();
+        var order = await orderRepository.FindByIdAsync(byOrderIdQuery.OrderId);
+        if (order is null) return Enumerable.Empty<Batch>();
+
+        var batchIds = order.RequestedBatches.Select(rb => rb.BatchId).Distinct().ToList();
+        return await batchRepository.ListByIdsAsync(batchIds);
     }
 
-    public Task<IEnumerable<Supply>> Handle(GetOrderSuppliesQuery query)
+    public async Task<IEnumerable<Supply>> Handle(GetOrderSuppliesByOrderIdQuery byOrderIdQuery)
     {
-        throw new NotImplementedException();
-    }
+        var order = await orderRepository.FindByIdAsync(byOrderIdQuery.OrderId);
+        if (order is null) return Enumerable.Empty<Supply>();
 
+        var batchIds = order.RequestedBatches.Select(rb => rb.BatchId).Distinct().ToList();
+        var batches = await batchRepository.ListByIdsAsync(batchIds);
+
+        var supplyIds = batches.Select(b => b.SupplyId).Distinct().ToList();
+        return await supplyRepository.ListByIdsAsync(supplyIds);
+    }
+ 
     public async Task<OrderToSupplierBatch?> Handle(GetOrderToSupplierBatchByIdQuery query)
     {
         var order = await orderRepository.FindByIdAsync(query.OrderId);
