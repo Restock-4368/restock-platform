@@ -8,6 +8,6 @@ public interface IOrderCommandService
     Task<OrderToSupplier?> Handle(CreateOrderCommand command);
     Task Handle(UpdateOrderCommand command);
     Task Handle(DeleteOrderCommand command);
-    Task Handle(AddOrderRequestedBatchCommand command);
+    Task Handle(AddOrderToSupplierBatchCommand command);
     Task Handle(UpdateOrderToSupplierBatchCommand command); 
 }

@@ -50,7 +50,7 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
         await unitOfWork.CompleteAsync();
     }
 
-    public async Task Handle(AddOrderRequestedBatchCommand command)
+    public async Task Handle(AddOrderToSupplierBatchCommand command)
     {
         var order = await orderRepository.FindByIdAsync(command.OrderId);
 
