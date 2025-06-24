@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <!-- Dependency Injection related packages -->
+        <PackageReference Include="Cortex.Mediator" Version="1.6.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
@@ -43,6 +44,7 @@
       <Folder Include="Monitoring\Infrastructure\" />
       <Folder Include="Monitoring\Interfaces\" />
       <Folder Include="Profiles\" />
+      <Folder Include="Resource\Infrastructure\" />
       <Folder Include="Subscription\" />
     </ItemGroup>
 

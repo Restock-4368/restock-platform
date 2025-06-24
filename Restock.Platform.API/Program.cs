@@ -3,13 +3,14 @@ using Restock.Platform.API.Shared.Domain.Repositories;
 using Restock.Platform.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore; 
 using Restock.Platform.API.Planning.Application.Internal.CommandServices;
 using Restock.Platform.API.Planning.Application.Internal.QueryServices;
 using Restock.Platform.API.Planning.Domain.Repositories;
 using Restock.Platform.API.Planning.Domain.Services;
 using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
-
+using Cortex.Mediator.Commands;
+using Cortex.Mediator.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +70,7 @@ builder.Services.AddSwaggerGen(options => {
 
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+ 
 // Planning Bounded Context
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IRecipeCommandService, RecipeCommandService>();
