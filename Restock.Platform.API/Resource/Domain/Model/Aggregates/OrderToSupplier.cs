@@ -126,9 +126,9 @@ public class OrderToSupplier
     }
  
     
-    public void Update(DateTime date,DateTime estimatedShipDate,
-        DateTime estimatedShipTime,
-        string description,
+    public void Update(DateTime date,DateTime? estimatedShipDate,
+        DateTime? estimatedShipTime,
+        string? description,
         int adminRestaurantId,
         int supplierId, 
         int requestedProductsCount,

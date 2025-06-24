@@ -8,7 +8,7 @@ namespace Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositor
 
 public class OrderRepository(AppDbContext context) : BaseRepository<OrderToSupplier>(context), IOrderRepository
 {
-    public async Task<IEnumerable<OrderToSupplier?>> LisyAsync()
+    public new async Task<IEnumerable<OrderToSupplier>> ListAsync()
     {
         return await Context.Set<OrderToSupplier>()
             .ToListAsync();
