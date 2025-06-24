@@ -1,5 +1,5 @@
 ﻿using Restock.Platform.API.Resource.Domain.Model.Commands;
-using Restock.Platform.API.Resource.Domain.Model.Entities;
+using Restock.Platform.API.Resource.Domain.Model.Aggregates;
 
 namespace Restock.Platform.API.Resource.Domain.Services;
 
@@ -9,5 +9,5 @@ public interface IOrderCommandService
     Task Handle(UpdateOrderCommand command);
     Task Handle(DeleteOrderCommand command);
     Task Handle(AddOrderRequestedBatchCommand command);
-    Task Handle(UpdateOrderRequestedBatchCommand command); 
+    Task Handle(UpdateOrderToSupplierBatchCommand command); 
 }
