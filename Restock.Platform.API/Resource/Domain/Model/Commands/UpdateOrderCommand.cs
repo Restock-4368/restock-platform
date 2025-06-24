@@ -1,7 +1,9 @@
-﻿namespace Restock.Platform.API.Resource.Domain.Model.Commands;
+﻿using Restock.Platform.API.Resource.Domain.Model.Entities;
+
+namespace Restock.Platform.API.Resource.Domain.Model.Commands;
 
 public record UpdateOrderCommand(
-    Guid Id,
+    int OrderId,
     DateTime Date,
     DateTime EstimatedShipDate,
     DateTime EstimatedShipTime,
