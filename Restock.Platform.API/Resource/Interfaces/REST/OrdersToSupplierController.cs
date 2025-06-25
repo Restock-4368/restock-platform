@@ -87,13 +87,13 @@ public class OrdersToSupplierController(
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or supplies unavailable")]
     public async Task<IActionResult> GetCustomSuppliesForOrder(int orderId)
     {
-        var customSupplies = await orderQueryService.Handle(new GetOrderCustomSuppliesQuery(orderId));
+        var customSupplies = await orderQueryService.Handle(new GetOrderCustomSuppliesByOrderIdQuery(orderId));
         
         if (customSupplies is null)
             return NotFound();
         
         var customSupplyResources = customSupplies
-            .Select(CustomSupplyResourceAssembler.ToResourceFromEntity);
+            .Select(CustomSupplyResourceFromEntityAssembler.ToResourceFromEntity);
         
         return Ok(customSupplyResources); 
     }
