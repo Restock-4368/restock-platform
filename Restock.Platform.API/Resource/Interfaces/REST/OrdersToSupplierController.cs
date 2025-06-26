@@ -72,10 +72,19 @@ public class OrdersToSupplierController(
     [SwaggerResponse(StatusCodes.Status200OK, "Batches found", typeof(IEnumerable<BatchResource>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
     public async Task<IActionResult> GetBatchesForOrder(int orderId)
-    {
-        var batches = await orderQueryService.Handle(new GetOrderBatchesByOrderIdQuery(orderId));
-        var batchResources = batches.Select(b => new BatchResource(b.BatchId, b.CustomSupplyId, b.CustomSupply, b.Stock, b.ExpirationDate, b.UserId)); 
-        return Ok(batchResources);
+    { 
+        var batches = (await orderQueryService
+                .Handle(new GetOrderBatchesByOrderIdQuery(orderId)))
+            .ToList();    
+
+        if (!batches.Any())
+            return NotFound();
+
+        var batchResources = batches
+            .Select(BatchResourceFromEntityAssembler.ToResourceFromEntity);
+
+        return Ok(batchResources); 
+        
     }
     
     [HttpGet("{orderId:int}/supplies")]
@@ -86,16 +95,40 @@ public class OrdersToSupplierController(
     [SwaggerResponse(StatusCodes.Status200OK, "Supplies found", typeof(IEnumerable<SupplyResource>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or supplies unavailable")]
     public async Task<IActionResult> GetCustomSuppliesForOrder(int orderId)
-    {
-        var customSupplies = await orderQueryService.Handle(new GetOrderCustomSuppliesByOrderIdQuery(orderId));
-        
-        if (customSupplies is null)
+    { 
+        var customSupplies = (await orderQueryService
+                .Handle(new GetOrderCustomSuppliesByOrderIdQuery(orderId)))
+            .ToList();    
+
+        if (!customSupplies.Any())
             return NotFound();
-        
+
         var customSupplyResources = customSupplies
             .Select(CustomSupplyResourceFromEntityAssembler.ToResourceFromEntity);
-        
+
         return Ok(customSupplyResources); 
+    }
+    
+    [HttpGet("{orderId:int}/requested-batches")]
+    [SwaggerOperation(
+        Summary = "Get Requested Batches for Order",
+        Description = "Returns the batches requested related to an order.",
+        OperationId = "GetOrderSupplies")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Requested Batches found", typeof(IEnumerable<SupplyResource>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or Requested Batches unavailable")]
+    public async Task<IActionResult> GetOrderToSupplierBatchesForOrder(int orderId)
+    {
+        var requestedBatches = (await orderQueryService
+                .Handle(new GetOrderToSupplierBatchesByOrderIdQuery(orderId)))
+            .ToList();    
+
+        if (!requestedBatches.Any())
+            return NotFound();
+
+        var requestedBatchResources = requestedBatches
+            .Select(OrderToSupplierBatchResourceFromEntityAssembler.ToResourceFromEntity);
+
+        return Ok(requestedBatchResources); 
     }
     
     [HttpPost]
