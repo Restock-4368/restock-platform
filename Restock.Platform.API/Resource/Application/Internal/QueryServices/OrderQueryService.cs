@@ -55,12 +55,4 @@ public class OrderQueryService(IOrderRepository orderRepository,
         return await customSupplyRepository.ListByIdsAsync(customSupplyIds);
     }
  
-    public async Task<OrderToSupplierBatch?> Handle(GetOrderToSupplierBatchByIdQuery query)
-    {
-        var order = await orderRepository.FindByIdAsync(query.OrderId);
-        if (order is null) return null;
-
-        return order.RequestedBatches.FirstOrDefault(b => b.OrderToSupplierBatchId == query.OrderToSupplierBatchId);
-    }
- 
 }
