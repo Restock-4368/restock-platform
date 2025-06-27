@@ -160,11 +160,7 @@ public class OrderToSupplier
     {
         Situation = EOrderToSupplierSituations.Cancelled;
     }
-    
-    public void ChangeToOnHold()
-    {
-        State = EOrderToSupplierStates.OnHold;
-    }
+     
     public void ChangeToPreparing()
     {
         State = EOrderToSupplierStates.Preparing;
@@ -177,7 +173,7 @@ public class OrderToSupplier
     
     public void ChangeToDelivered()
     {
-        State = EOrderToSupplierStates.Preparing;
+        State = EOrderToSupplierStates.Delivered;
     }
 }
  
