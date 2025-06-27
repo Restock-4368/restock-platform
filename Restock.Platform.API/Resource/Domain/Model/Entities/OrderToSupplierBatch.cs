@@ -2,7 +2,7 @@ namespace Restock.Platform.API.Resource.Domain.Model.Entities;
 
 public class OrderToSupplierBatch
 { 
-    public int OrderToSupplierId { get; set; }
+    public int OrderId { get; set; }
     public int BatchId { get; set; }
     
     public Batch? Batch { get; set; }
@@ -10,9 +10,9 @@ public class OrderToSupplierBatch
     public bool Accepted { get; set; }
 
     // Constructor
-    public OrderToSupplierBatch(int orderToSupplierId, int batchId, double quantity, bool accepted)
+    public OrderToSupplierBatch(int orderId, int batchId, double quantity, bool accepted)
     { 
-        OrderToSupplierId = orderToSupplierId;
+        OrderId = orderId;
         BatchId = batchId;
         Quantity = quantity;
         Accepted = accepted;

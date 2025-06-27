@@ -19,7 +19,7 @@ public static class OrderResourceFromEntityAssembler
             order.TotalPrice,
             order.RequestedBatches
                 .Select(b => new OrderToSupplierBatchResource(
-                    b.OrderToSupplierId, 
+                    b.OrderId, 
                     b.BatchId,  
                     b.Quantity,
                     b.Accepted

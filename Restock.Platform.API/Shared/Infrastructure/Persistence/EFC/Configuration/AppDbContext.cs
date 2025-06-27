@@ -149,16 +149,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             o.HasMany(x => x.RequestedBatches)
              .WithOne()
-             .HasForeignKey(b => b.OrderToSupplierId)
+             .HasForeignKey(b => b.OrderId)
              .OnDelete(DeleteBehavior.Cascade);
         });
 
         // OrderToSupplierBatch
         builder.Entity<OrderToSupplierBatch>(b =>
         {
-            b.HasKey(x => new { x.OrderToSupplierId, x.BatchId });
+            b.HasKey(x => new { x.OrderId, x.BatchId });
 
-            b.Property(x => x.OrderToSupplierId)
+            b.Property(x => x.OrderId)
              .HasColumnName("order_id")
              .IsRequired();
 

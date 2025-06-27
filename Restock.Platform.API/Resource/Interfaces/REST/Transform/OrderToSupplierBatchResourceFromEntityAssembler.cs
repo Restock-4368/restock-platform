@@ -9,7 +9,7 @@ public class OrderToSupplierBatchResourceFromEntityAssembler
     public static OrderToSupplierBatchResource ToResourceFromEntity(OrderToSupplierBatch orderToSupplierBatch)
     {
         return new OrderToSupplierBatchResource(
-            orderToSupplierBatch.OrderToSupplierId,  
+            orderToSupplierBatch.OrderId,  
             orderToSupplierBatch.BatchId,  
             orderToSupplierBatch.Quantity,
             orderToSupplierBatch.Accepted

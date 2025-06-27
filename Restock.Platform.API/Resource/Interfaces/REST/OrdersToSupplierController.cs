@@ -147,7 +147,7 @@ public class OrdersToSupplierController(
         var order = await orderCommandService.Handle(createOrderCommand);
         if (order is null) return BadRequest("Order to supplier could not be created.");
         var orderResource = OrderResourceFromEntityAssembler.ToResourceFromEntity(order);
-        return CreatedAtAction(nameof(GetOrderToSupplierById), new { categoryId = orderResource.Id }, orderResource);
+        return CreatedAtAction(nameof(GetOrderToSupplierById), new { orderId  = orderResource.Id }, orderResource);
     }
     
      // DELETE /api/v1/orders/{orderId}
