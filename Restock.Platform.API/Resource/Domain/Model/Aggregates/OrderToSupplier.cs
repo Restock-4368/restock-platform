@@ -11,7 +11,7 @@ public class OrderToSupplier
     /// <summary>
     /// Gets or sets the unique identifier of the order.
     /// </summary>
-    public int OrderId { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// Gets or sets the creation date of the order.
@@ -91,7 +91,7 @@ public class OrderToSupplier
                            string? description, int adminRestaurantId, int supplierId,
                            int requestedProductsCount, decimal totalPrice)
     {
-        OrderId = 0;
+        Id = 0;
         Date = date;
         EstimatedShipDate = estimatedShipDate;
         EstimatedShipTime = estimatedShipTime;

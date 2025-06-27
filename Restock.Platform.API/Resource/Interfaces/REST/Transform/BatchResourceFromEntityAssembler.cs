@@ -8,7 +8,7 @@ public static class BatchResourceFromEntityAssembler
     public static BatchResource ToResourceFromEntity(Batch batch)
     {
         return new BatchResource(
-            batch.BatchId,
+            batch.Id,
             batch.CustomSupplyId, 
             batch.CustomSupply, 
             batch.Stock, 

@@ -4,7 +4,7 @@ namespace Restock.Platform.API.Resource.Domain.Model.Entities;
 
 public class Batch
 {
-    public int BatchId { get; private set; }
+    public int Id { get; private set; }
     public int CustomSupplyId { get; private set; }
     
     public CustomSupply CustomSupply { get; set; }
@@ -16,7 +16,7 @@ public class Batch
     // Constructor
     public Batch( int customSupplyId, CustomSupply customSupply, int stock, DateTime? expirationDate, int userId)
     {
-        BatchId = 0;
+        Id = 0;
         CustomSupply = customSupply;
         CustomSupplyId = customSupplyId;
         Stock = stock;

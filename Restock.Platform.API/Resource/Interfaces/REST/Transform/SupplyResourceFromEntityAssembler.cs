@@ -8,7 +8,7 @@ public static class SupplyResourceFromEntityAssembler
     public static SupplyResource ToResourceFromEntity(Supply supply)         
     {                                                                     
         return new SupplyResource(                                         
-            supply.SupplyId,                                                
+            supply.Id,                                                
             supply.Name,                                         
             supply.Description,                                           
             supply.UnitMeasurement                                            

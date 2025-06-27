@@ -8,7 +8,7 @@ public static class OrderResourceFromEntityAssembler
     public static OrderResource ToResourceFromEntity(OrderToSupplier order)
     {
         return new OrderResource(
-            order.OrderId, 
+            order.Id, 
             order.Date, 
             order.EstimatedShipDate,
             order.EstimatedShipTime,

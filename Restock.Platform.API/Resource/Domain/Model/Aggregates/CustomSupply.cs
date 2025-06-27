@@ -4,7 +4,7 @@ namespace Restock.Platform.API.Resource.Domain.Model.Aggregates;
  
 public class CustomSupply
 {
-    public int CustomSupplyId { get; set; }
+    public int Id { get; set; }
     public int SupplyId { get; set; }
     public Supply Supply { get; set; } 
     public string Description { get; set; }
@@ -18,9 +18,9 @@ public class CustomSupply
     // Constructor
     public CustomSupply(Supply supply, string description, bool perishable, int minStock, int maxStock, int categoryId, decimal price, int userId)
     {
-        CustomSupplyId = 0;
+        Id = 0;
         Supply = supply ?? throw new ArgumentNullException(nameof(supply));
-        SupplyId = supply.SupplyId;
+        SupplyId = supply.Id;
 
         Description = description;
         Perishable = perishable;

@@ -12,7 +12,7 @@ public class CustomSupplyRepository(AppDbContext context)
     public async Task<IEnumerable<CustomSupply>> ListByIdsAsync(IEnumerable<int> customSupplyIds)
     {
         return await Context.Set<CustomSupply>()
-            .Where(s => customSupplyIds.Contains(s.CustomSupplyId))
+            .Where(s => customSupplyIds.Contains(s.Id))
             .ToListAsync();
     }
 }

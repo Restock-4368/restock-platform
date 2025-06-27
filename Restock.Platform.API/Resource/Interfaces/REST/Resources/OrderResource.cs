@@ -3,7 +3,7 @@
 namespace Restock.Platform.API.Resource.Interfaces.REST.Resources;
 
 public record OrderResource(
-    int OrderId,
+    int Id,
     DateTime Date,
     DateTime? EstimatedShipDate,
     DateTime? EstimatedShipTime,

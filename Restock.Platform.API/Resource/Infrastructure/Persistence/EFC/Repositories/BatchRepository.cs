@@ -17,7 +17,7 @@ public class BatchRepository(AppDbContext context) : BaseRepository<Batch>(conte
     public async Task<IEnumerable<Batch>> ListByIdsAsync(IEnumerable<int> batchIds)
     {
         return await Context.Set<Batch>()
-            .Where(b => batchIds.Contains(b.BatchId))
+            .Where(b => batchIds.Contains(b.Id))
             .ToListAsync();
     }
 }

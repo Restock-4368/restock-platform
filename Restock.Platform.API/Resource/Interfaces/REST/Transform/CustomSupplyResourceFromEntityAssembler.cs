@@ -8,7 +8,8 @@ public static class CustomSupplyResourceFromEntityAssembler
 {                                                                         
     public static CustomSupplyResource ToResourceFromEntity(CustomSupply customSupply)         
     {                                                                     
-        return new CustomSupplyResource(           
+        return new CustomSupplyResource(     
+            customSupply.Id,
             customSupply.SupplyId,
             customSupply.Supply,
             customSupply.Description,
