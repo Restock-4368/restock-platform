@@ -70,8 +70,8 @@ public class OrderToSupplier
 
     
     
-    private readonly List<OrderToSupplierBatch> _resquestBatches = new();
-    public IReadOnlyCollection<OrderToSupplierBatch> RequestedBatches => _resquestBatches.AsReadOnly();
+    private readonly List<OrderToSupplierBatch> _requestedBatches = new();
+    public IReadOnlyCollection<OrderToSupplierBatch> RequestedBatches => _requestedBatches.AsReadOnly();
 
     
     
@@ -118,11 +118,11 @@ public class OrderToSupplier
     
     public void AddOrderToSupplierBatch(int orderId, int batchId, double quantity, bool accepted)
     {
-        var existing = _resquestBatches.FirstOrDefault(s => s.BatchId == batchId);
+        var existing = _requestedBatches.FirstOrDefault(s => s.BatchId == batchId);
 
         if (existing != null) throw new InvalidOperationException("Batch already added to order");
 
-        _resquestBatches.Add(new OrderToSupplierBatch(orderId, batchId, quantity, accepted));
+        _requestedBatches.Add(new OrderToSupplierBatch(orderId, batchId, quantity, accepted));
     }
  
     

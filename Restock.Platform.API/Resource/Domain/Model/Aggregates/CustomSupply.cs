@@ -16,6 +16,8 @@ public class CustomSupply
     public int UserId { get; set; }
  
     // Constructor
+    private CustomSupply() { }
+
     public CustomSupply(Supply supply, string description, bool perishable, int minStock, int maxStock, int categoryId, decimal price, int userId)
     {
         Id = 0;

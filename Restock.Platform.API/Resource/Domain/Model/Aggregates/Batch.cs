@@ -14,6 +14,7 @@ public class Batch
 
     
     // Constructor
+    private Batch() { }
     public Batch( int customSupplyId, CustomSupply customSupply, int stock, DateTime? expirationDate, int userId)
     {
         Id = 0;
