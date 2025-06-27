@@ -10,4 +10,12 @@ public interface IOrderCommandService
     Task Handle(DeleteOrderCommand command);
     Task Handle(AddOrderToSupplierBatchCommand command);
     Task Handle(UpdateOrderToSupplierBatchCommand command); 
+    
+    Task Handle(ApproveOrderToSupplierCommand command);
+    Task Handle(DeclineOrderToSupplierCommand command);
+    Task Handle(CancelOrderToSupplierCommand command);
+    
+    Task Handle(SetOrderPreparingCommand command);
+    Task Handle(SetOrderOnTheWayCommand command);
+    Task Handle(SetOrderDeliveredCommand command);
 }

@@ -85,4 +85,52 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
         orderRepository.Update(order);
         await unitOfWork.CompleteAsync();
     }
+
+    public async Task Handle(ApproveOrderToSupplierCommand command)
+    {
+        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        if (order is null) throw new Exception("Order not found");
+        order.Approve();
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(DeclineOrderToSupplierCommand command)
+    {
+        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        if (order is null) throw new Exception("Order not found");
+        order.Decline();
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(CancelOrderToSupplierCommand command)
+    {
+        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        if (order is null) throw new Exception("Order not found");
+        order.Cancel();
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(SetOrderPreparingCommand command)
+    {
+        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        if (order is null) throw new Exception("Order not found");
+        order.ChangeToPreparing();
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(SetOrderOnTheWayCommand command)
+    {
+        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        if (order is null) throw new Exception("Order not found");
+        order.ChangeToOnTheWay();
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(SetOrderDeliveredCommand command)
+    {
+        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        if (order is null) throw new Exception("Order not found");
+        order.ChangeToDelivered();
+        await unitOfWork.CompleteAsync();
+    }
 }
