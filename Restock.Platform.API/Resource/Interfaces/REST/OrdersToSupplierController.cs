@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
+using Restock.Platform.API.Resource.Domain.Model.Commands;
 using Restock.Platform.API.Resource.Domain.Model.Queries;
 using Restock.Platform.API.Resource.Domain.Services;
 using Restock.Platform.API.Resource.Interfaces.REST.Resources;
@@ -113,7 +114,7 @@ public class OrdersToSupplierController(
     [SwaggerOperation(
         Summary = "Get Requested Batches for Order",
         Description = "Returns the batches requested related to an order.",
-        OperationId = "GetOrderSupplies")]
+        OperationId = "GetRequestedBatchesForOrder")]
     [SwaggerResponse(StatusCodes.Status200OK, "Requested Batches found", typeof(IEnumerable<SupplyResource>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or Requested Batches unavailable")]
     public async Task<IActionResult> GetOrderToSupplierBatchesForOrder(int orderId)
@@ -131,6 +132,8 @@ public class OrdersToSupplierController(
         return Ok(requestedBatchResources); 
     }
     
+    //Commands 
+    
     [HttpPost]
     [SwaggerOperation(
         Summary = "Create a New Order to Supplier",
@@ -147,5 +150,152 @@ public class OrdersToSupplierController(
         return CreatedAtAction(nameof(GetOrderToSupplierById), new { categoryId = orderResource.OrderId }, orderResource);
     }
     
+     // DELETE /api/v1/orders/{orderId}
+    [HttpDelete("{orderId:int}")]
+    [SwaggerOperation(
+        Summary     = "Delete an Order to Supplier",
+        Description = "Deletes the order with the given id.",
+        OperationId = "DeleteOrderToSupplier")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order deleted")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> DeleteOrderToSupplier(int orderId)
+    {
+        await orderCommandService.Handle(new DeleteOrderCommand(orderId));
+        return NoContent();
+    }
+
+    // PUT /api/v1/orders/{orderId}
+    [HttpPut("{orderId:int}")]
+    [SwaggerOperation(
+        Summary     = "Update an Order to Supplier",
+        Description = "Updates the order's details.",
+        OperationId = "UpdateOrderToSupplier")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order updated")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid data")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> UpdateOrderToSupplier(
+        int orderId,
+        [FromBody] UpdateOrderResource resource)
+    {
+        var cmd = UpdateOrderCommandFromResourceAssembler
+            .ToCommandFromResource(orderId, resource);
+        await orderCommandService.Handle(cmd);
+        return NoContent();
+    }
+
+    // PUT /api/v1/orders/{orderId}/requested-batches
+    [HttpPut("{orderId:int}/requested-batches")]
+    [SwaggerOperation(
+        Summary     = "Update Requested Batches for Order",
+        Description = "Updates the quantities or acceptance flags of batches for this order.",
+        OperationId = "UpdateOrderRequestedBatches")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Requested batches updated")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order or batch not found")]
+    public async Task<IActionResult> UpdateOrderRequestedBatches(
+        int orderId,
+        [FromBody] UpdateOrderToSupplierBatchResource resource)
+    {
+        var cmd = UpdateOrderToSupplierBatchCommandFromResourceAssembler
+            .ToCommandFromResource(orderId, resource);
+        await orderCommandService.Handle(cmd);
+        return NoContent();
+    }
   
+    [HttpPost("{orderId:int}/requested-batches")]
+    [SwaggerOperation(
+        Summary     = "Add requested batches to an order",
+        Description = "Adds multiple requested batches to an order.",
+        OperationId = "AddRequestedBatchesToOrder")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Requested batches added successfully")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Requested batches added successfully")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> AddRequestedBatchesToOrder(
+        [FromRoute] int orderId,
+        [FromBody] List<AddOrderToSupplierBatchResource> orderToSupplierBatches)
+    { 
+        var existing = await orderQueryService.Handle(new GetOrderByIdQuery(orderId));
+        if (existing is null)
+            return NotFound();
+ 
+        foreach (var orderToSupplierBatch in orderToSupplierBatches)
+        {
+            var addOrderToSupplierBatchCommand = AddOrderToSupplierBatchFromResourceAssembler
+                .ToCommandFromResource(orderToSupplierBatch);
+            await orderCommandService.Handle(addOrderToSupplierBatchCommand);
+        }
+ 
+        return CreatedAtAction(
+            nameof(GetOrderToSupplierById),
+            new { orderId },
+            null
+        );
+    }
+    
+    //Commands to change situation and state of the order to supplier
+    
+    // POST /api/v1/orders/{orderId}/approve
+    [HttpPost("{orderId:int}/approve")]
+    [SwaggerOperation(Summary = "Approve an order", OperationId = "ApproveOrderToSupplier")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order approved")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> Approve(int orderId)
+    {
+        await orderCommandService.Handle(new ApproveOrderToSupplierCommand(orderId));
+        return NoContent();
+    }
+
+    // POST /api/v1/orders/{orderId}/decline
+    [HttpPost("{orderId:int}/decline")]
+    [SwaggerOperation(Summary = "Decline an order", OperationId = "DeclineOrderToSupplier")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order declined")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> Decline(int orderId)
+    {
+        await orderCommandService.Handle(new DeclineOrderToSupplierCommand(orderId));
+        return NoContent();
+    }
+
+    // POST /api/v1/orders/{orderId}/cancel
+    [HttpPost("{orderId:int}/cancel")]
+    [SwaggerOperation(Summary = "Cancel an order", OperationId = "CancelOrderToSupplier")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order cancelled")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> Cancel(int orderId)
+    {
+        await orderCommandService.Handle(new CancelOrderToSupplierCommand(orderId));
+        return NoContent();
+    }
+
+    // POST /api/v1/orders/{orderId}/preparing
+    [HttpPost("{orderId:int}/preparing")]
+    [SwaggerOperation(Summary = "Mark order as Preparing", OperationId = "SetOrderPreparing")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order marked as Preparing")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> SetPreparing(int orderId)
+    {
+        await orderCommandService.Handle(new SetOrderPreparingCommand(orderId));
+        return NoContent();
+    }
+
+    // POST /api/v1/orders/{orderId}/on-the-way
+    [HttpPost("{orderId:int}/on-the-way")]
+    [SwaggerOperation(Summary = "Mark order as On The Way", OperationId = "SetOrderOnTheWay")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order marked as On The Way")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> SetOnTheWay(int orderId)
+    {
+        await orderCommandService.Handle(new SetOrderOnTheWayCommand(orderId));
+        return NoContent();
+    }
+
+    // POST /api/v1/orders/{orderId}/delivered
+    [HttpPost("{orderId:int}/delivered")]
+    [SwaggerOperation(Summary = "Mark order as Delivered", OperationId = "SetOrderDelivered")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Order marked as Delivered")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    public async Task<IActionResult> SetDelivered(int orderId)
+    {
+        await orderCommandService.Handle(new SetOrderDeliveredCommand(orderId));
+        return NoContent();
+    }
 }
