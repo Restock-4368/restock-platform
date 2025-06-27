@@ -11,6 +11,11 @@ using Restock.Platform.API.Planning.Domain.Services;
 using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+using Restock.Platform.API.Resource.Application.Internal.CommandServices;
+using Restock.Platform.API.Resource.Application.Internal.QueryServices;
+using Restock.Platform.API.Resource.Domain.Repositories;
+using Restock.Platform.API.Resource.Domain.Services;
+using Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +81,15 @@ builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IRecipeCommandService, RecipeCommandService>();
 builder.Services.AddScoped<IRecipeQueryService, RecipeQueryService>();
 
+//Resource Bounded Context
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderCommandService, OrderCommandService>();
+builder.Services.AddScoped<IOrderQueryService, OrderQueryService>();
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<ISupplyRepository, SupplyRepository>();
+builder.Services.AddScoped<ICustomSupplyRepository, CustomSupplyRepository>(); 
+
+ 
 var app = builder.Build();
 
 // Verify if the database exists and create it if it doesn't
