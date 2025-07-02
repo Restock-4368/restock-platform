@@ -24,7 +24,6 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
             throw new Exception("Order not found");
 
         order.Update(
-            command.Date,
             command.EstimatedShipDate,
             command.EstimatedShipTime,
             command.Description,
@@ -60,8 +59,7 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
         order.AddOrderToSupplierBatch(
             command.OrderId,
             command.BatchId,
-            command.Quantity,
-            command.Accepted
+            command.Quantity
         );
 
         orderRepository.Update(order);  

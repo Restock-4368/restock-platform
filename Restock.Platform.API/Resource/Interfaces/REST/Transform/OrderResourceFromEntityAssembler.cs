@@ -9,7 +9,7 @@ public static class OrderResourceFromEntityAssembler
     {
         return new OrderResource(
             order.Id, 
-            order.Date, 
+            order.CreatedDate?.DateTime,
             order.EstimatedShipDate,
             order.EstimatedShipTime,
             order.Description, 

@@ -7,7 +7,6 @@ public static class AddOrderToSupplierBatchFromResourceAssembler
 {
     public static AddOrderToSupplierBatchCommand ToCommandFromResource(AddOrderToSupplierBatchResource resource)
     {
-        return new AddOrderToSupplierBatchCommand(resource.OrderId, resource.BatchId, resource.Quantity,
-            resource.Accepted);
+        return new AddOrderToSupplierBatchCommand(resource.OrderId, resource.BatchId, resource.Quantity);
     }
 }

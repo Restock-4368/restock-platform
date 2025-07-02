@@ -8,15 +8,10 @@ public static class CreateOrderCommandFromResourceAssembler
 {
     public static CreateOrderCommand ToCommandFromResource(CreateOrderResource resource)
     {
-        return new CreateOrderCommand( 
-            resource.Date, 
-            resource.EstimatedShipDate,
-            resource.EstimatedShipTime,
+        return new CreateOrderCommand(   
             resource.Description, 
             resource.AdminRestaurantId, 
-            resource.SupplierId,
-            resource.RequestedProductsCount, 
-            resource.TotalPrice
+            resource.SupplierId
         );
     }
 }

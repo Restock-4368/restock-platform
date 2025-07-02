@@ -10,13 +10,11 @@ public class OrderToSupplierBatch
     public bool Accepted { get; set; }
 
     // Constructor
-    public OrderToSupplierBatch(int orderId, int batchId, double quantity, bool accepted)
+    public OrderToSupplierBatch(int orderId, int batchId, double quantity)
     { 
         OrderId = orderId;
         BatchId = batchId;
         Quantity = quantity;
-        Accepted = accepted;
+        Accepted = false;
     }
-    
-
 }
