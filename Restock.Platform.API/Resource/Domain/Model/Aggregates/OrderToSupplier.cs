@@ -6,17 +6,12 @@ namespace Restock.Platform.API.Resource.Domain.Model.Aggregates;
 /// <summary>
 /// Represents a purchase order made to a supplier from a restaurant administration.
 /// </summary>
-public class OrderToSupplier
+public partial class OrderToSupplier
 {
     /// <summary>
     /// Gets or sets the unique identifier of the order.
     /// </summary>
     public int Id { get; set; }
-
-    /// <summary>
-    /// Gets or sets the creation date of the order.
-    /// </summary>
-    public DateTime Date { get; set; }
 
     /// <summary>
     /// Gets or sets the estimated shipping date.
@@ -78,55 +73,42 @@ public class OrderToSupplier
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderToSupplier"/> class.
     /// </summary>
-    /// <param name="id">Order ID.</param>
-    /// <param name="date">Order date.</param>
-    /// <param name="estimatedShipDate">Estimated shipping date.</param>
-    /// <param name="estimatedShipTime">Estimated shipping time.</param>
+    /// <param name="id">Order ID.</param>  
     /// <param name="description">Description of the order.</param>
     /// <param name="adminRestaurantId">Restaurant admin ID.</param>
-    /// <param name="supplierId">Supplier ID.</param> 
-    /// <param name="requestedProductsCount">Requested products count.</param>
-    /// <param name="totalPrice">Total price of the order.</param> 
-    public OrderToSupplier(DateTime date, DateTime? estimatedShipDate, DateTime? estimatedShipTime,
-                           string? description, int adminRestaurantId, int supplierId,
-                           int requestedProductsCount, decimal totalPrice)
+    /// <param name="supplierId">Supplier ID.</param>  
+    public OrderToSupplier(string? description, int adminRestaurantId, int supplierId)
     {
         Id = 0;
-        Date = date;
-        EstimatedShipDate = estimatedShipDate;
-        EstimatedShipTime = estimatedShipTime;
+        EstimatedShipDate = null;
+        EstimatedShipTime = null;
         Description = description;
         AdminRestaurantId = adminRestaurantId;
         SupplierId = supplierId; 
         State = EOrderToSupplierStates.OnHold;
         Situation = EOrderToSupplierSituations.Pending;
-        RequestedProductsCount = requestedProductsCount;
-        TotalPrice = totalPrice;
+        RequestedProductsCount = _requestedBatches.Count;
+        TotalPrice = 0;
         PartiallyAccepted = false;
     }
    
     public OrderToSupplier(CreateOrderCommand command) : this(
-        command.Date,
-        command.EstimatedShipDate,
-        command.EstimatedShipTime,
         command.Description,
         command.AdminRestaurantId,
-        command.SupplierId,
-        command.RequestedProductsCount,
-        command.TotalPrice
+        command.SupplierId
     ){}
     
-    public void AddOrderToSupplierBatch(int orderId, int batchId, double quantity, bool accepted)
+    public void AddOrderToSupplierBatch(int orderId, int batchId, double quantity)
     {
         var existing = _requestedBatches.FirstOrDefault(s => s.BatchId == batchId);
 
         if (existing != null) throw new InvalidOperationException("Batch already added to order");
 
-        _requestedBatches.Add(new OrderToSupplierBatch(orderId, batchId, quantity, accepted));
+        _requestedBatches.Add(new OrderToSupplierBatch(orderId, batchId, quantity));
     }
  
     
-    public void Update(DateTime date,DateTime? estimatedShipDate,
+    public void Update(DateTime? estimatedShipDate,
         DateTime? estimatedShipTime,
         string? description,
         int adminRestaurantId,
@@ -134,8 +116,7 @@ public class OrderToSupplier
         int requestedProductsCount,
         decimal totalPrice,
         bool partiallyAccepted)
-    {
-        Date = date;
+    { 
         EstimatedShipDate = estimatedShipDate;
         EstimatedShipTime = estimatedShipTime;
         Description = description;
