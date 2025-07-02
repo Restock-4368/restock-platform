@@ -1,6 +1,6 @@
 namespace Restock.Platform.API.Resource.Domain.Model.ValueObjects;
 
-public class Supply
+public record Supply
 {
     public int Id { get; set; }
     public string Name { get; set; }
