@@ -3,7 +3,7 @@ using Restock.Platform.API.Resource.Interfaces.REST.Resources;
 
 namespace Restock.Platform.API.Resource.Interfaces.REST.Transform;
 
-public class UpdateOrderToSupplierBatchCommandFromResourceAssembler
+public static class UpdateOrderToSupplierBatchCommandFromResourceAssembler
 {
     public static UpdateOrderToSupplierBatchCommand ToCommandFromResource(
         int orderId,
