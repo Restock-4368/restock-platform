@@ -1,6 +1,6 @@
-﻿namespace Restock.Platform.API.Resource.Domain.Model.Commands;
+﻿namespace Restock.Platform.API.Resource.Interfaces.REST.Resources;
 
-public record CreateCustomSupplyCommand(
+public record CreateCustomSupplyResource(
     int SupplyId, 
     string Description, 
     bool Perishable, 

@@ -1,6 +1,6 @@
-﻿namespace Restock.Platform.API.Resource.Domain.Model.Commands;
+﻿namespace Restock.Platform.API.Resource.Interfaces.REST.Resources;
 
-public record UpdateCustomSupplyCommand(   
+public record UpdateCustomSupplyResource(   
     int CustomSupplyId,
     string Description, 
     bool Perishable, 
