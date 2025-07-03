@@ -6,12 +6,12 @@ namespace Restock.Platform.API.Resource.Interfaces.REST.Transform;
 
 public static class CustomSupplyResourceFromEntityAssembler                      
 {                                                                         
-    public static CustomSupplyResource ToResourceFromEntity(CustomSupply customSupply)         
+    public static CustomSupplyResource ToResourceFromEntity(CustomSupply? customSupply)         
     {                                                                     
         return new CustomSupplyResource(     
             customSupply.Id,
             customSupply.SupplyId,
-            customSupply.Supply,
+            customSupply.Supply != null ? SupplyResourceFromEntityAssembler.ToResourceFromEntity(customSupply.Supply) : null,
             customSupply.Description,
             customSupply.Perishable,
             customSupply.MinStock,

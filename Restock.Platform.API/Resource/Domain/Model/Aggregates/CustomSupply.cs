@@ -1,4 +1,5 @@
-﻿using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
+﻿using Restock.Platform.API.Resource.Domain.Model.Commands;
+using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
 
 namespace Restock.Platform.API.Resource.Domain.Model.Aggregates;
  
@@ -18,11 +19,10 @@ public class CustomSupply
     // Constructor
     private CustomSupply() { }
 
-    public CustomSupply(Supply supply, string description, bool perishable, int minStock, int maxStock, int categoryId, decimal price, int userId)
+    public CustomSupply(int supplyId, string description, bool perishable, int minStock, int maxStock, int categoryId, decimal price, int userId)
     {
-        Id = 0;
-        Supply = supply ?? throw new ArgumentNullException(nameof(supply));
-        SupplyId = supply.Id;
+        Id = 0; 
+        SupplyId = supplyId;
 
         Description = description;
         Perishable = perishable;
@@ -31,5 +31,32 @@ public class CustomSupply
         CategoryId = categoryId;
         Price = price;
         UserId = userId;
+    }
+    
+    public CustomSupply(CreateCustomSupplyCommand command) : 
+        this(
+            command.SupplyId,
+            command.Description,
+            command.Perishable,
+            command.MinStock,
+            command.MaxStock,
+            command.CategoryId,
+            command.Price,
+            command.UserId
+            )
+    {}
+    
+    public void Update( 
+        string description, 
+        bool perishable, 
+        int minStock, 
+        int maxStock,   
+        decimal price)
+    {   
+        this.Description = description;
+        this.Perishable = perishable;
+        this.MinStock = MinStock;
+        this.MaxStock = MaxStock;
+        this.Price = Price;
     }
 }

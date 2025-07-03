@@ -5,7 +5,7 @@ namespace Restock.Platform.API.Resource.Interfaces.REST.Transform;
 
 public static class SupplyResourceFromEntityAssembler                      
 {                                                                         
-    public static SupplyResource ToResourceFromEntity(Supply supply)         
+    public static SupplyResource ToResourceFromEntity(Supply? supply)         
     {                                                                     
         return new SupplyResource(                                         
             supply.Id,                                                

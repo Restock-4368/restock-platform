@@ -5,7 +5,7 @@ namespace Restock.Platform.API.Resource.Interfaces.REST.Resources;
 public record CustomSupplyResource(
     int Id,
     int SupplyId,
-    Supply Supply, 
+    SupplyResource Supply, 
     string Description, 
     bool Perishable, 
     int MinStock, 
