@@ -16,6 +16,7 @@ using Restock.Platform.API.Resource.Application.Internal.QueryServices;
 using Restock.Platform.API.Resource.Domain.Repositories;
 using Restock.Platform.API.Resource.Domain.Services;
 using Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositories;
+using Restock.Platform.API.Resource.Infrastructure.Persistence.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(
     options => options.Conventions.Add(new KebabCaseRouteNamingConvention())
     )
+    
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
@@ -85,10 +87,18 @@ builder.Services.AddScoped<IRecipeQueryService, RecipeQueryService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderCommandService, OrderCommandService>();
 builder.Services.AddScoped<IOrderQueryService, OrderQueryService>();
-builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-builder.Services.AddScoped<ISupplyRepository, SupplyRepository>();
-builder.Services.AddScoped<ICustomSupplyRepository, CustomSupplyRepository>(); 
 
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<IBatchCommandService, BatchCommandService>();
+builder.Services.AddScoped<IBatchQueryService, BatchQueryService>();
+
+builder.Services.AddScoped<ISupplyRepository, SupplyRepository>(); 
+builder.Services.AddScoped<ISupplyQueryService, SupplyQueryService>();
+
+builder.Services.AddScoped<ICustomSupplyRepository, CustomSupplyRepository>(); 
+builder.Services.AddScoped<ICustomSupplyCommandService, CustomSupplyCommandService>(); 
+builder.Services.AddScoped<ICustomSupplyQueryService, CustomSupplyQueryService>(); 
+ 
  
 var app = builder.Build();
 
@@ -96,8 +106,13 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>(); 
+    
+    
+    
+    var context = services.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
+        
+    await SupplySeeder.SeedAsync(services);
 }
 
 
