@@ -5,8 +5,13 @@ namespace Restock.Platform.API.Resource.Interfaces.REST.Transform;
 
 public static class AddOrderToSupplierBatchFromResourceAssembler
 {
-    public static AddOrderToSupplierBatchCommand ToCommandFromResource(AddOrderToSupplierBatchResource resource)
+    public static AddOrderToSupplierBatchCommand ToCommandFromResource(
+        int orderId, 
+        AddOrderToSupplierBatchResource resource)
     {
-        return new AddOrderToSupplierBatchCommand(resource.OrderId, resource.BatchId, resource.Quantity);
+        return new AddOrderToSupplierBatchCommand(
+            orderId,
+            resource.BatchId,
+            resource.Quantity);
     }
 }
