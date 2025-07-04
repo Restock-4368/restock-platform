@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
+using Restock.Platform.API.Resource.Domain.Model.Aggregates;
 using Restock.Platform.API.Resource.Domain.Model.Commands;
 using Restock.Platform.API.Resource.Domain.Model.Queries;
 using Restock.Platform.API.Resource.Domain.Services;
@@ -12,18 +13,18 @@ namespace Restock.Platform.API.Resource.Interfaces.REST;
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-[SwaggerTag("Available Orders to Supplier endpoints")]
-public class OrdersToSupplierController( 
+[SwaggerTag("Available Orders endpoints")]
+public class OrdersController( 
     IOrderCommandService orderCommandService,
     IOrderQueryService orderQueryService) : ControllerBase
 {
     [HttpGet("{orderId:int}")]
     [SwaggerOperation(
-        Summary = "Get Order to supplier by Id",
-        Description = "Returns a order to supplier by its unique identifier.",
+        Summary = "Get Order by Id",
+        Description = "Returns a order by its unique identifier.",
         OperationId = "GetOrderToSupplierById")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Order to supplier found", typeof(OrderResource))]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Order to supplier not found")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Order found", typeof(OrderResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
     public async Task<IActionResult> GetOrderToSupplierById(int orderId)
     {
         var getOrderToSupplierByIdQuery = new GetOrderByIdQuery(orderId);
@@ -38,40 +39,47 @@ public class OrdersToSupplierController(
 
     [HttpGet]
     [SwaggerOperation(
-        Summary = "Get All Orders to supplier",
-        Description = "Returns a list of all available orders to supplier.",
+        Summary = "Get all orders (optionally filtered by supplierId or adminRestaurantId)",
+        Description = "Returns all orders, or filtered by supplierId or adminRestaurantId if provided.",
         OperationId = "GetAllOrders")]
     [SwaggerResponse(StatusCodes.Status200OK, "List of orders", typeof(IEnumerable<OrderResource>))]
-    public async Task<IActionResult> GetAllOrdersToSupplier()
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Cannot provide both supplierId and adminRestaurantId at the same time")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "No orders found")]
+    public async Task<IActionResult> GetAllOrdersToSupplier(
+        [FromQuery] int? supplierId,
+        [FromQuery] int? adminRestaurantId)
     {
-        var orders = await orderQueryService.Handle(new GetAllOrdersQuery());
+        if (supplierId.HasValue && adminRestaurantId.HasValue)
+            return BadRequest("Cannot provide both supplierId and adminRestaurantId at the same time.");
+
+        IEnumerable<OrderToSupplier> orders;
+        
+        if (supplierId.HasValue)
+        {
+            orders = await orderQueryService.Handle(new GetAllOrdersBySupplierIdQuery(supplierId.Value));
+        }
+        else if (adminRestaurantId.HasValue)
+        {
+            orders = await orderQueryService.Handle(new GetAllOrdersByAdminRestaurantIdQuery(adminRestaurantId.Value));
+        }
+        else
+        {
+            orders = await orderQueryService.Handle(new GetAllOrdersQuery());
+        }
+        
         var orderResources = orders
             .Select(OrderResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(orderResources);
     }
+ 
     
-    [HttpGet("supplier/{supplierId:int}")]
-    [SwaggerOperation(
-        Summary = "Get All Orders to supplier by Supplier Id",
-        Description = "Returns all orders to supplier made to a specific supplier.",
-        OperationId = "GetOrdersBySupplierId")]
-    [SwaggerResponse(StatusCodes.Status200OK, "List of orders", typeof(IEnumerable<OrderResource>))]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "No orders found for the given supplier")]
-    public async Task<IActionResult> GetOrdersBySupplierId(int supplierId)
-    { 
-        var orders = await orderQueryService.Handle(new GetAllOrdersBySupplierIdQuery(supplierId));
-         
-        var orderResources = orders.Select(OrderResourceFromEntityAssembler.ToResourceFromEntity);
-        return Ok(orderResources);
-    }
-    
-    [HttpGet("orders/{orderId:int}/batches")]
+    [HttpGet("{orderId:int}/batches")]
     [SwaggerOperation(
         Summary = "Get Batches for Order",
         Description = "Returns the batches associated with an order.",
         OperationId = "GetOrderBatches")]
     [SwaggerResponse(StatusCodes.Status200OK, "Batches found", typeof(IEnumerable<BatchResource>))]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order or batches not found")]
     public async Task<IActionResult> GetBatchesForOrder(int orderId)
     { 
         var batches = (await orderQueryService
@@ -88,12 +96,12 @@ public class OrdersToSupplierController(
         
     }
     
-    [HttpGet("{orderId:int}/supplies")]
+    [HttpGet("{orderId:int}/custom-supplies")]
     [SwaggerOperation(
-        Summary = "Get Supplies for Order",
-        Description = "Returns the supplies related to an order's batches.",
-        OperationId = "GetOrderSupplies")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Supplies found", typeof(IEnumerable<SupplyResource>))]
+        Summary = "Get Custom Supplies for Order",
+        Description = "Returns the Custom supplies related to an order's batches.",
+        OperationId = "GetOrderCustomSupplies")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Custom Supplies found", typeof(IEnumerable<CustomSupplyResource>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or supplies unavailable")]
     public async Task<IActionResult> GetCustomSuppliesForOrder(int orderId)
     { 
@@ -115,8 +123,8 @@ public class OrdersToSupplierController(
         Summary = "Get Requested Batches for Order",
         Description = "Returns the batches requested related to an order.",
         OperationId = "GetRequestedBatchesForOrder")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Requested Batches found", typeof(IEnumerable<SupplyResource>))]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Order not found or Requested Batches unavailable")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Requested Batches found", typeof(IEnumerable<OrderToSupplierBatchResource>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order or requested batches not found")]
     public async Task<IActionResult> GetOrderToSupplierBatchesForOrder(int orderId)
     {
         var requestedBatches = (await orderQueryService
@@ -132,20 +140,43 @@ public class OrdersToSupplierController(
         return Ok(requestedBatchResources); 
     }
     
+    [HttpGet("{orderId:int}/supplies")]
+    [SwaggerOperation(
+        Summary = "Get Supplies for Order",
+        Description = "Returns the supplies related to an order's batches.",
+        OperationId = "GetOrderSupplies")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Supplies found", typeof(IEnumerable<SupplyResource>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order or supplies not found")]
+    public async Task<IActionResult> GetSuppliesForOrder(int orderId)
+    { 
+        var supplies = (await orderQueryService
+                .Handle(new GetOrderSuppliesByOrderIdQuery(orderId)))
+            .ToList();    
+
+        if (!supplies.Any())
+            return NotFound();
+
+        var supplyResources = supplies
+            .Select(SupplyResourceFromEntityAssembler.ToResourceFromEntity);
+
+        return Ok(supplyResources); 
+    }
+    
     //Commands 
     
     [HttpPost]
     [SwaggerOperation(
-        Summary = "Create a New Order to Supplier",
-        Description = "Creates a new order to Supplier and returns the created order to supplier resource.",
+        Summary = "Create a New Order",
+        Description = "Creates a new order and returns the created order resource.",
         OperationId = "CreateOrder")]
-    [SwaggerResponse(StatusCodes.Status201Created, "Order to supplier created successfully", typeof(OrderResource))]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Order to supplier could not be created")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Order created successfully", typeof(OrderResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Order or supplies not found")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Order could not be created")]
     public async Task<IActionResult> CreateOrderToSupplier([FromBody] CreateOrderResource resource)
     {
         var createOrderCommand = CreateOrderCommandFromResourceAssembler.ToCommandFromResource(resource);
         var order = await orderCommandService.Handle(createOrderCommand);
-        if (order is null) return BadRequest("Order to supplier could not be created.");
+        if (order is null) return BadRequest("Order could not be created.");
         var orderResource = OrderResourceFromEntityAssembler.ToResourceFromEntity(order);
         return CreatedAtAction(nameof(GetOrderToSupplierById), new { orderId  = orderResource.Id }, orderResource);
     }
@@ -153,7 +184,7 @@ public class OrdersToSupplierController(
      // DELETE /api/v1/orders/{orderId}
     [HttpDelete("{orderId:int}")]
     [SwaggerOperation(
-        Summary     = "Delete an Order to Supplier",
+        Summary     = "Delete an Order",
         Description = "Deletes the order with the given id.",
         OperationId = "DeleteOrderToSupplier")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Order deleted")]
@@ -167,7 +198,7 @@ public class OrdersToSupplierController(
     // PUT /api/v1/orders/{orderId}
     [HttpPut("{orderId:int}")]
     [SwaggerOperation(
-        Summary     = "Update an Order to Supplier",
+        Summary     = "Update an Order",
         Description = "Updates the order's details.",
         OperationId = "UpdateOrderToSupplier")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Order updated")]
@@ -184,23 +215,26 @@ public class OrdersToSupplierController(
     }
 
     // PUT /api/v1/orders/{orderId}/requested-batches
-    [HttpPut("{orderId:int}/requested-batches")]
+    [HttpPut("{orderId:int}/requested-batches/{batchId:int}")]
     [SwaggerOperation(
         Summary     = "Update Requested Batches for Order",
         Description = "Updates the quantities or acceptance flags of batches for this order.",
         OperationId = "UpdateOrderRequestedBatches")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Requested batches updated")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid request data")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Order or batch not found")]
     public async Task<IActionResult> UpdateOrderRequestedBatches(
         int orderId,
+        int batchId,
         [FromBody] UpdateOrderToSupplierBatchResource resource)
     {
         var cmd = UpdateOrderToSupplierBatchCommandFromResourceAssembler
-            .ToCommandFromResource(orderId, resource);
+            .ToCommandFromResource(orderId, batchId, resource);
         await orderCommandService.Handle(cmd);
         return NoContent();
     }
   
+    // POST /api/v1/orders/{orderId}/requested-batches  
     [HttpPost("{orderId:int}/requested-batches")]
     [SwaggerOperation(
         Summary     = "Add requested batches to an order",
@@ -208,9 +242,10 @@ public class OrdersToSupplierController(
         OperationId = "AddRequestedBatchesToOrder")]
     [SwaggerResponse(StatusCodes.Status201Created, "Requested batches added successfully")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Requested batches added successfully")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "Order cannot be updated due to business rules")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
     public async Task<IActionResult> AddRequestedBatchesToOrder(
-        [FromRoute] int orderId,
+        [FromRoute] int orderId, 
         [FromBody] List<AddOrderToSupplierBatchResource> orderToSupplierBatches)
     { 
         var existing = await orderQueryService.Handle(new GetOrderByIdQuery(orderId));
@@ -220,18 +255,24 @@ public class OrdersToSupplierController(
         foreach (var orderToSupplierBatch in orderToSupplierBatches)
         {
             var addOrderToSupplierBatchCommand = AddOrderToSupplierBatchFromResourceAssembler
-                .ToCommandFromResource(orderToSupplierBatch);
+                .ToCommandFromResource(orderId, orderToSupplierBatch);
             await orderCommandService.Handle(addOrderToSupplierBatchCommand);
         }
  
-        return CreatedAtAction(
-            nameof(GetOrderToSupplierById),
-            new { orderId },
-            null
-        );
+        // Luego de crear batches
+        var updatedOrder = await orderQueryService.Handle(new GetOrderByIdQuery(orderId));
+        var orderResource = OrderResourceFromEntityAssembler.ToResourceFromEntity(updatedOrder);
+        return Ok(orderResource);
+        
+        // return CreatedAtAction(
+        //     nameof(GetOrderToSupplierById),
+        //     new { orderId },
+        //     null
+        // );
+        
     }
     
-    //Commands to change situation and state of the order to supplier
+    //Commands to change situation and state of the order
     
     // POST /api/v1/orders/{orderId}/approve
     [HttpPost("{orderId:int}/approve")]
