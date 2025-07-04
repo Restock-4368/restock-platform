@@ -110,21 +110,11 @@ public partial class OrderToSupplier
     
     public void Update(DateTime? estimatedShipDate,
         DateTime? estimatedShipTime,
-        string? description,
-        int adminRestaurantId,
-        int supplierId, 
-        int requestedProductsCount,
-        decimal totalPrice,
-        bool partiallyAccepted)
+        string? description)
     { 
         EstimatedShipDate = estimatedShipDate;
         EstimatedShipTime = estimatedShipTime;
         Description = description;
-        AdminRestaurantId = adminRestaurantId;
-        SupplierId = supplierId;  
-        RequestedProductsCount = requestedProductsCount;
-        TotalPrice = totalPrice;
-        PartiallyAccepted = partiallyAccepted;
     }
      
     public void Approve()

@@ -26,12 +26,7 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
         order.Update(
             command.EstimatedShipDate,
             command.EstimatedShipTime,
-            command.Description,
-            command.AdminRestaurantId,
-            command.SupplierId,
-            command.RequestedProductsCount,
-            command.TotalPrice,
-            command.PartiallyAccepted
+            command.Description
         );
 
         orderRepository.Update(order);
@@ -68,7 +63,7 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
     
     public async Task Handle(UpdateOrderToSupplierBatchCommand command)
     {
-        var order = await orderRepository.FindByIdAsync(command.OrderId);
+        var order = await orderRepository.FindByIdAsyncWithRequestedBatches(command.OrderId);
 
         if (order is null)
             throw new Exception("Order not found");
@@ -78,7 +73,6 @@ public class OrderCommandService(IOrderRepository orderRepository, IUnitOfWork u
             throw new Exception("Batch not found in order");
 
         batch.Quantity = command.Quantity;
-        batch.Accepted = command.Accepted;
 
         orderRepository.Update(order);
         await unitOfWork.CompleteAsync();

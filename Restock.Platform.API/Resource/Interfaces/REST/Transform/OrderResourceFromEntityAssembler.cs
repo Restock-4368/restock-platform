@@ -8,22 +8,19 @@ public static class OrderResourceFromEntityAssembler
     public static OrderResource ToResourceFromEntity(OrderToSupplier order)
     {
         return new OrderResource(
-            order.Id, 
+            order.Id,
             order.CreatedDate?.DateTime,
             order.EstimatedShipDate,
             order.EstimatedShipTime,
-            order.Description, 
-            order.AdminRestaurantId, 
+            order.Description,
+            order.AdminRestaurantId,
             order.SupplierId,
-            order.RequestedProductsCount, 
+            order.RequestedProductsCount,
             order.TotalPrice,
-            order.RequestedBatches
-                .Select(b => new OrderToSupplierBatchResource(
-                    b.OrderId, 
-                    b.BatchId,  
-                    b.Quantity,
-                    b.Accepted
-                    ))
-                .ToList());
+            order.RequestedBatches != null
+                ? order.RequestedBatches.Select(OrderToSupplierBatchResourceFromEntityAssembler.ToResourceFromEntity)
+                    .ToList()
+                : new List<OrderToSupplierBatchResource>()
+        );
     }
 }
