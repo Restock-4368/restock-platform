@@ -12,7 +12,7 @@ namespace Restock.Platform.API.Resource.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag("Available Supplies endpoints")]
-public class SupplyController(ISupplyQueryService supplyQueryService) : ControllerBase
+public class SuppliesController(ISupplyQueryService supplyQueryService) : ControllerBase
 {
     [HttpGet("{supplyId:int}")]
     [SwaggerOperation(
@@ -38,6 +38,7 @@ public class SupplyController(ISupplyQueryService supplyQueryService) : Controll
         Summary = "Get All supplies",
         Description = "Returns a list of all available supplIes.",
         OperationId = "GetAllSupplies")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "No supplies found")]
     [SwaggerResponse(StatusCodes.Status200OK, "List of supplies", typeof(IEnumerable<SupplyResource>))]
     public async Task<IActionResult> GetAllSupplies()
     {

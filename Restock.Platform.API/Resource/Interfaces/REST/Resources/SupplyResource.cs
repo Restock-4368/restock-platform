@@ -4,5 +4,8 @@ public record SupplyResource(
     int Id, 
     string Name, 
     string Description, 
-    string UniMeasurement
+    bool Perishable,
+    string UnitName,
+    string UnitAbbreviation,
+    string Category
 );

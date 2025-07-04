@@ -1,6 +1,6 @@
 ﻿using Restock.Platform.API.Resource.Domain.Model.Aggregates;
 using Restock.Platform.API.Resource.Domain.Model.Queries;
-using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
+using Restock.Platform.API.Resource.Domain.Model.Entities;
 
 namespace Restock.Platform.API.Resource.Domain.Services;
 

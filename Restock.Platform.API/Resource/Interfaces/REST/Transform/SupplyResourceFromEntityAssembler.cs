@@ -1,4 +1,4 @@
-using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
+using Restock.Platform.API.Resource.Domain.Model.Entities;
 using Restock.Platform.API.Resource.Interfaces.REST.Resources;
 
 namespace Restock.Platform.API.Resource.Interfaces.REST.Transform;
@@ -11,7 +11,10 @@ public static class SupplyResourceFromEntityAssembler
             supply.Id,                                                
             supply.Name,                                         
             supply.Description,                                           
-            supply.UnitMeasurement                                            
+            supply.Perishable,
+            supply.UnitName,
+            supply.UnitAbbreviation,
+            supply.Category
         );                                                            
     }                                                                     
 }                                                                         
