@@ -25,6 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<OrderToSupplierBatch> OrderToSupplierBatches { get; set; }
     public DbSet<CustomSupply> CustomSupplies { get; set; }
     public DbSet<Batch> Batches { get; set; }
+    public DbSet<Supply> Supplies { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
