@@ -12,11 +12,9 @@ public static class CustomSupplyResourceFromEntityAssembler
             customSupply.Id,
             customSupply.SupplyId,
             customSupply.Supply != null ? SupplyResourceFromEntityAssembler.ToResourceFromEntity(customSupply.Supply) : null,
-            customSupply.Description,
-            customSupply.Perishable,
+            customSupply.Description, 
             customSupply.MinStock,
-            customSupply.MaxStock,
-            customSupply.CategoryId,
+            customSupply.MaxStock, 
             customSupply.Price,
             customSupply.UserId                               
         );                                                            

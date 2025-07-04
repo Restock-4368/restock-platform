@@ -25,7 +25,6 @@ public class CustomSupplyCommandService(ICustomSupplyRepository customSupplyRepo
 
         customSupply.Update(
             command.Description,
-            command.Perishable,
             command.MinStock,
             command.MaxStock,
             command.Price 

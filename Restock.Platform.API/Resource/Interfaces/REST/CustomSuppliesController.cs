@@ -16,7 +16,7 @@ namespace Restock.Platform.API.Resource.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag("Available Custom Supplies endpoints")]
-public class CustomSupplyController(ICustomSupplyCommandService customSupplyCommandService,
+public class CustomSuppliesController(ICustomSupplyCommandService customSupplyCommandService,
     ICustomSupplyQueryService customSupplyQueryService) : ControllerBase
 {
     [HttpGet("{CustomSupplyId:int}")]
@@ -43,7 +43,8 @@ public class CustomSupplyController(ICustomSupplyCommandService customSupplyComm
         Summary = "Get All Custom supplIes",
         Description = "Returns a list of all available Custom supplIes.",
         OperationId = "GetAllCustomSupplies")]
-    [SwaggerResponse(StatusCodes.Status200OK, "List of CustomSupplies", typeof(IEnumerable<CustomSupplyResource>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "No custom supplies found")]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of custom supplies", typeof(IEnumerable<CustomSupplyResource>))]
     public async Task<IActionResult> GetAllCustomSupplies()
     {
         var customSupplies = await customSupplyQueryService.Handle(new GetAllCustomSuppliesQuery());
