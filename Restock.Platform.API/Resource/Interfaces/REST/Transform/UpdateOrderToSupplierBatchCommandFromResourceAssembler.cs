@@ -7,13 +7,13 @@ public static class UpdateOrderToSupplierBatchCommandFromResourceAssembler
 {
     public static UpdateOrderToSupplierBatchCommand ToCommandFromResource(
         int orderId,
+        int batchId,
         UpdateOrderToSupplierBatchResource orderToSupplierBatchResource)
     {
-        return new UpdateOrderToSupplierBatchCommand(
+        return new UpdateOrderToSupplierBatchCommand(  
             orderId,
-            orderToSupplierBatchResource.BatchId,
-            orderToSupplierBatchResource.Quantity,
-            orderToSupplierBatchResource.Accepted
+            batchId,
+            orderToSupplierBatchResource.Quantity
         );
     }
 }

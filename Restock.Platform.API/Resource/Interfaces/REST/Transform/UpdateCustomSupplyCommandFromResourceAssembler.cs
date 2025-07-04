@@ -12,7 +12,6 @@ public class UpdateCustomSupplyCommandFromResourceAssembler
         return new UpdateCustomSupplyCommand( 
             customSupplyId,
             customSupplyResource.Description,
-            customSupplyResource.Perishable,
             customSupplyResource.MinStock,
             customSupplyResource.MaxStock,
             customSupplyResource.Price

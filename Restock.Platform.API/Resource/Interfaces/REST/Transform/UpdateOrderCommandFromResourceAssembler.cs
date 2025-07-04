@@ -9,17 +9,11 @@ public static class UpdateOrderCommandFromResourceAssembler
         int orderId,
         UpdateOrderResource orderResource)
     {
-        return new UpdateOrderCommand(
+        return new UpdateOrderCommand(  
             orderId,
-            orderResource.Date,
             orderResource.EstimatedShipDate,
             orderResource.EstimatedShipTime,
-            orderResource.Description,
-            orderResource.AdminRestaurantId,
-            orderResource.SupplierId,
-            orderResource.RequestedProductsCount,
-            orderResource.TotalPrice,
-            orderResource.PartiallyAccepted
+            orderResource.Description
         );
     }
 }
