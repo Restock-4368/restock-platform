@@ -13,7 +13,7 @@ namespace Restock.Platform.API.Resource.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag("Available Batches endpoints")]
-public class BatchController(IBatchCommandService batchCommandService,
+public class BatchesController(IBatchCommandService batchCommandService,
     IBatchQueryService batchQueryService) : ControllerBase
 {
     [HttpGet("{batchId:int}")]
@@ -40,6 +40,7 @@ public class BatchController(IBatchCommandService batchCommandService,
         Summary = "Get All Batches to supplier",
         Description = "Returns a list of all available batches.",
         OperationId = "GetAllBatches")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "No batches found")]
     [SwaggerResponse(StatusCodes.Status200OK, "List of batches", typeof(IEnumerable<BatchResource>))]
     public async Task<IActionResult> GetAllBatches()
     {
@@ -64,7 +65,7 @@ public class BatchController(IBatchCommandService batchCommandService,
         var batch = await batchCommandService.Handle(createBatchCommand);
         if (batch is null) return BadRequest("Batch could not be created.");
         var batchResource = BatchResourceFromEntityAssembler.ToResourceFromEntity(batch);
-        return CreatedAtAction(nameof(GetBatchById), new { batchId  = batchResource.BatchId }, batchResource); 
+        return CreatedAtAction(nameof(GetBatchById), new { batchId  = batchResource.Id }, batchResource); 
     }
     
     // DELETE /api/v1/batches/{batchId}
