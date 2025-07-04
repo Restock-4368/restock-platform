@@ -8,9 +8,16 @@ namespace Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositor
 
 public class OrderRepository(AppDbContext context) : BaseRepository<OrderToSupplier>(context), IOrderRepository
 {
-    public new async Task<IEnumerable<OrderToSupplier>> ListAsync()
+    public async Task<IEnumerable<OrderToSupplier>> ListAsyncWithRequestedBatches()
     {
-        return await Context.Set<OrderToSupplier>()
-            .ToListAsync();
+        return await context.OrdersToSupplier
+            .Include(o => o.RequestedBatches)
+            .ToListAsync(); 
+    }
+    public async Task<OrderToSupplier> FindByIdAsyncWithRequestedBatches(int id)
+    {
+        return await Context.OrdersToSupplier
+            .Include(o => o.RequestedBatches)
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 }
