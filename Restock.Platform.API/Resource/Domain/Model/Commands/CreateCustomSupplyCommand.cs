@@ -2,10 +2,8 @@
 
 public record CreateCustomSupplyCommand(
     int SupplyId, 
-    string Description, 
-    bool Perishable, 
+    string Description,
     int MinStock, 
-    int MaxStock, 
-    int CategoryId, 
+    int MaxStock,  
     decimal Price, 
     int UserId);

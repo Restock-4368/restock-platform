@@ -9,11 +9,9 @@ public class CreateCustomSupplyCommandFromResourceAssembler
     {
         return new CreateCustomSupplyCommand(   
             resource.SupplyId,
-            resource.Description,
-            resource.Perishable,
+            resource.Description, 
             resource.MinStock,
-            resource.MaxStock,
-            resource.CategoryId,
+            resource.MaxStock, 
             resource.Price,
             resource.UserId 
         );

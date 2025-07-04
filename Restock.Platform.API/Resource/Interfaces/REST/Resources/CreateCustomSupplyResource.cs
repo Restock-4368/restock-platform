@@ -2,10 +2,8 @@
 
 public record CreateCustomSupplyResource(
     int SupplyId, 
-    string Description, 
-    bool Perishable, 
+    string Description,  
     int MinStock, 
     int MaxStock, 
-    int CategoryId, 
     decimal Price, 
     int UserId);
