@@ -101,10 +101,6 @@ public static class ModelBuilderExtensions
              .HasColumnName("accepted")
              .IsRequired();
             
-            b.HasOne<Batch>() 
-                .WithMany()
-                .HasForeignKey(x => x.BatchId)
-                .OnDelete(DeleteBehavior.Cascade);
 
         });
 
@@ -131,11 +127,6 @@ public static class ModelBuilderExtensions
                 .HasMaxLength(300)
                 .IsRequired();
 
-            // Perishable
-            cs.Property(x => x.Perishable)
-                .HasColumnName("perishable")
-                .IsRequired();
-
             // MinStock / MaxStock
             cs.Property(x => x.MinStock)
                 .HasColumnName("min_stock")
@@ -143,11 +134,7 @@ public static class ModelBuilderExtensions
             cs.Property(x => x.MaxStock)
                 .HasColumnName("max_stock")
                 .IsRequired();
-
-            // CategoryId
-            cs.Property(x => x.CategoryId)
-                .HasColumnName("category_id")
-                .IsRequired();
+ 
 
             // Price
             cs.Property(x => x.Price)
@@ -191,5 +178,44 @@ public static class ModelBuilderExtensions
                 .IsRequired();
 
         });
+        
+        // Supply context
+        builder.Entity<Supply>(s =>
+        {
+            s.HasKey(x => x.Id);
+            s.Property(x => x.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            s.Property(x => x.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            s.Property(x => x.Description)
+                .HasColumnName("description")
+                .HasMaxLength(300)
+                .IsRequired(false);
+
+            s.Property(x => x.Perishable)
+                .HasColumnName("perishable")
+                .IsRequired();
+
+            s.Property(x => x.UnitName)
+                .HasColumnName("unit_name")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            s.Property(x => x.UnitAbbreviation)
+                .HasColumnName("unit_abbreviation")
+                .HasMaxLength(10)
+                .IsRequired();
+
+            s.Property(x => x.Category)
+                .HasColumnName("category")
+                .HasMaxLength(100)
+                .IsRequired();
+        });
+        
     } 
 }
