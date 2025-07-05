@@ -1,5 +1,6 @@
 ﻿using Restock.Platform.API.Resource.Domain.Model.Commands;
 using Restock.Platform.API.Resource.Domain.Model.Entities;
+using Restock.Platform.API.Shared.Domain.Exceptions;
 
 namespace Restock.Platform.API.Resource.Domain.Model.Aggregates;
  
@@ -19,9 +20,25 @@ public class CustomSupply
 
     public CustomSupply(int supplyId, string description, int minStock, int maxStock, decimal price, int userId)
     {
-        Id = 0; 
-        SupplyId = supplyId;
+        if (supplyId <= 0)
+            throw new BusinessRuleException("SupplyId must be greater than 0.");
 
+        if (userId <= 0)
+            throw new BusinessRuleException("UserId must be greater than 0.");
+
+        if (string.IsNullOrWhiteSpace(description))
+            throw new BusinessRuleException("Description cannot be empty.");
+
+        if (minStock < 0)
+            throw new BusinessRuleException("MinStock cannot be negative.");
+
+        if (maxStock < minStock)
+            throw new BusinessRuleException("MaxStock cannot be less than MinStock.");
+
+        if (price < 0)
+            throw new BusinessRuleException("Price cannot be negative.");
+         
+        SupplyId = supplyId; 
         Description = description;
         MinStock = minStock;
         MaxStock = maxStock; 

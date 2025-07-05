@@ -15,4 +15,9 @@ public class CustomSupplyRepository(AppDbContext context)
             .Where(s => customSupplyIds.Contains(s.Id))
             .ToListAsync();
     }
+
+    public async Task<bool> ExistsBySupplyIdAndUserIdAsync(int supplyId, int userId)
+    {
+        return await Context.Set<CustomSupply>().AnyAsync(batchRequest => (batchRequest.SupplyId == supplyId && batchRequest.UserId == userId));
+    }
 }
