@@ -54,7 +54,8 @@ builder.Services.AddCors(options =>
 });
 
 // Add Configuration for Entity Framework Core
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") 
+                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
 if (connectionString == null) throw new InvalidOperationException("Connection string not found.");
 
 if (builder.Environment.IsDevelopment())
