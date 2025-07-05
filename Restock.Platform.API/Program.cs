@@ -3,13 +3,21 @@ using Restock.Platform.API.Shared.Domain.Repositories;
 using Restock.Platform.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore; 
 using Restock.Platform.API.Planning.Application.Internal.CommandServices;
 using Restock.Platform.API.Planning.Application.Internal.QueryServices;
 using Restock.Platform.API.Planning.Domain.Repositories;
 using Restock.Platform.API.Planning.Domain.Services;
 using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
-
+using Cortex.Mediator.Commands;
+using Cortex.Mediator.DependencyInjection;
+using Restock.Platform.API.Resource.Application.Internal.CommandServices;
+using Restock.Platform.API.Resource.Application.Internal.QueryServices;
+using Restock.Platform.API.Resource.Domain.Repositories;
+using Restock.Platform.API.Resource.Domain.Services;
+using Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositories;
+using Restock.Platform.API.Resource.Infrastructure.Persistence.Seeders;
+using Restock.Platform.API.Shared.Domain.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +35,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(
     options => options.Conventions.Add(new KebabCaseRouteNamingConvention())
     )
+    
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
@@ -69,20 +78,42 @@ builder.Services.AddSwaggerGen(options => {
 
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+ 
 // Planning Bounded Context
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IRecipeCommandService, RecipeCommandService>();
 builder.Services.AddScoped<IRecipeQueryService, RecipeQueryService>();
 
+//Resource Bounded Context
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderCommandService, OrderCommandService>();
+builder.Services.AddScoped<IOrderQueryService, OrderQueryService>();
+
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+builder.Services.AddScoped<IBatchCommandService, BatchCommandService>();
+builder.Services.AddScoped<IBatchQueryService, BatchQueryService>();
+
+builder.Services.AddScoped<ISupplyRepository, SupplyRepository>(); 
+builder.Services.AddScoped<ISupplyQueryService, SupplyQueryService>();
+
+builder.Services.AddScoped<ICustomSupplyRepository, CustomSupplyRepository>(); 
+builder.Services.AddScoped<ICustomSupplyCommandService, CustomSupplyCommandService>(); 
+builder.Services.AddScoped<ICustomSupplyQueryService, CustomSupplyQueryService>(); 
+ 
+ 
 var app = builder.Build();
 
 // Verify if the database exists and create it if it doesn't
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    
+    
+    
     var context = services.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
+        
+    await SupplySeeder.SeedAsync(services);
 }
 
 
@@ -95,6 +126,24 @@ using (var scope = app.Services.CreateScope())
 
 // Apply CORS Policy
 app.UseCors("AllowAllPolicy");
+
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (BusinessRuleException ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsJsonAsync(new { error = "Internal Server Error" });
+    }
+});
 
 // app.UseHttpsRedirection();
 

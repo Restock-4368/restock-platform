@@ -4,7 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Restock.Platform.API.Planning.Domain.Model.Aggregates;
 using Restock.Platform.API.Planning.Domain.Model.Entities;
 using Restock.Platform.API.Planning.Domain.Model.ValueObjects;
+using Restock.Platform.API.Resource.Domain.Model.Aggregates;
+using Restock.Platform.API.Resource.Domain.Model.Entities;
 using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
+using Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
 namespace Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -13,9 +16,17 @@ namespace Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configurati
 /// </summary>
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
+    // Planning
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<RecipeSupply> RecipeSupplies { get; set; }
 
+    // Resource 
+    public DbSet<OrderToSupplier> OrdersToSupplier { get; set; }
+    public DbSet<OrderToSupplierBatch> OrderToSupplierBatches { get; set; }
+    public DbSet<CustomSupply> CustomSupplies { get; set; }
+    public DbSet<Batch> Batches { get; set; }
+    public DbSet<Supply> Supplies { get; set; }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         builder.AddCreatedUpdatedInterceptor();
@@ -75,6 +86,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasConversion(q => q.Value, value => new RecipeQuantity(value));
 
         });
+        
+        builder.ApplyResourceConfiguration();
         
         builder.UseSnakeCaseNamingConvention();
 

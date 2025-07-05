@@ -1,6 +1,3 @@
 ﻿namespace Restock.Platform.API.Resource.Domain.Model.Commands;
 
-public class UpdateSupplyCommand
-{
-    
-}
+public record DeleteCustomSupplyCommand(int CustomSupplyId);
