@@ -232,6 +232,8 @@ app.Use(async (context, next) =>
 
 // app.UseHttpsRedirection();
 
+app.UseRequestLocalization();
+
 app.UseAuthorization();
 
 app.MapControllers();

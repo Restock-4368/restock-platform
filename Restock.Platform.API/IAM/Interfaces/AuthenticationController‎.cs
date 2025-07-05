@@ -4,6 +4,7 @@ using Restock.Platform.API.IAM.Domain.Services;
 using Restock.Platform.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using Restock.Platform.API.IAM.Interfaces.REST.Resources;
 using Restock.Platform.API.IAM.Interfaces.REST.Transform;
+using Restock.Platform.API.Shared.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Restock.Platform.API.IAM.Interfaces;
@@ -34,16 +35,18 @@ public class AuthenticationController(IUserCommandService userCommandService) : 
     public async Task<IActionResult> SignIn([FromBody] SignInResource signInResource)
     {
         try
-        {
+        { 
             var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(signInResource);
+             
             var authenticatedUser = await userCommandService.Handle(signInCommand);
+            
             var resource =
                 AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(authenticatedUser.user,
                     authenticatedUser.token);
             return Ok(resource);
         }
         catch (Exception ex)
-        {
+        { 
             return Unauthorized(ex.Message);
         }
     }
