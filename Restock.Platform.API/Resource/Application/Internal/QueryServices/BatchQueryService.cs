@@ -9,7 +9,7 @@ public class BatchQueryService(IBatchRepository batchRepository) : IBatchQuerySe
 {
     public async Task<Batch?> Handle(GetBatchByIdQuery query)
     {
-        return await batchRepository.FindByIdAsync(query.BatchId);
+        return await batchRepository.FindByIdWithCustomSupplyAsync(query.BatchId);
     }
 
     public async Task<IEnumerable<Batch?>> Handle(GetAllBatchesQuery query)

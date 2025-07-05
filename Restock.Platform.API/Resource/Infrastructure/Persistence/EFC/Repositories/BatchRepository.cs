@@ -11,6 +11,7 @@ public class BatchRepository(AppDbContext context) : BaseRepository<Batch>(conte
     public new async Task<IEnumerable<Batch>> ListAsync()
     {
         return await Context.Set<Batch>()
+            .Include(b => b.CustomSupply)
             .ToListAsync();
     }
     
@@ -18,6 +19,7 @@ public class BatchRepository(AppDbContext context) : BaseRepository<Batch>(conte
     {
         return await Context.Set<Batch>()
             .Where(b => batchIds.Contains(b.Id))
+            .Include(b => b.CustomSupply)
             .ToListAsync();
     }
 
@@ -32,6 +34,7 @@ public class BatchRepository(AppDbContext context) : BaseRepository<Batch>(conte
     {
         return await Context.Set<Batch>()
             .Where(b => b.CustomSupplyId == customSupplyId)
+            .Include(b => b.CustomSupply)
             .ToListAsync();
     }
 
@@ -39,6 +42,15 @@ public class BatchRepository(AppDbContext context) : BaseRepository<Batch>(conte
     {
         return await Context.Set<Batch>()
             .Include(b => b.CustomSupply)
+                .ThenInclude(cs => cs.Supply)
             .ToListAsync();
+    }
+
+    public async Task<Batch?> FindByIdWithCustomSupplyAsync(int id)
+    {
+        return await Context.Set<Batch>()
+            .Include(b => b.CustomSupply)
+                .ThenInclude(cs => cs.Supply)
+            .FirstOrDefaultAsync(b => b.Id == id);
     }
 }
