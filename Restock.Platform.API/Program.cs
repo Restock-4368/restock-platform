@@ -11,6 +11,18 @@ using Restock.Platform.API.Planning.Domain.Services;
 using Restock.Platform.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Restock.Platform.API.IAM.Application.Internal.CommandServices;
+using Restock.Platform.API.IAM.Application.Internal.OutboundServices;
+using Restock.Platform.API.IAM.Application.Internal.QueryServices;
+using Restock.Platform.API.IAM.Domain.Repositories;
+using Restock.Platform.API.IAM.Domain.Services;
+using Restock.Platform.API.IAM.Infrastructure.Hashing.BCrypt.Services;
+using Restock.Platform.API.IAM.Infrastructure.Persistence.EFC.Repositories;
+using Restock.Platform.API.IAM.Infrastructure.Tokens.JWT.Configuration;
+using Restock.Platform.API.IAM.Infrastructure.Tokens.JWT.Services;
+using Restock.Platform.API.IAM.Interfaces.ACL;
+using Restock.Platform.API.IAM.Interfaces.ACL.Services;
 using Restock.Platform.API.Resource.Application.Internal.CommandServices;
 using Restock.Platform.API.Resource.Application.Internal.QueryServices;
 using Restock.Platform.API.Resource.Domain.Repositories;
@@ -18,6 +30,7 @@ using Restock.Platform.API.Resource.Domain.Services;
 using Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositories;
 using Restock.Platform.API.Resource.Infrastructure.Persistence.Seeders;
 using Restock.Platform.API.Shared.Domain.Exceptions;
+using Restock.Platform.API.Shared.Infrastructure.Mediator.Cortex.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +87,57 @@ else if (builder.Environment.IsProduction())
 builder.Services.AddSwaggerGen(options => {
     options.EnableAnnotations();
 });
+// Add Swagger/OpenAPI support
+builder.Services.AddSwaggerGen(options =>
+{
+    // General API Information
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "UI-Topic.RestockPlatform.API",
+        Version = "v1",
+        Description = "UI-Topic RestockPlatform Platform API", 
+        Contact = new OpenApiContact
+        {
+            Name = "UI-Topic Studios",
+            Email = "uitopic@gmail.com"
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Apache 2.0",
+            Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0.html")
+        },
+    });
+    
+    // Enable Annotations for Swagger
+    options.EnableAnnotations();
+    
+    // Add Bearer Authentication for Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    // Add Security Requirement for Swagger
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+    
+});
 
 // Dependency Injection
 
@@ -101,15 +165,35 @@ builder.Services.AddScoped<ICustomSupplyRepository, CustomSupplyRepository>();
 builder.Services.AddScoped<ICustomSupplyCommandService, CustomSupplyCommandService>(); 
 builder.Services.AddScoped<ICustomSupplyQueryService, CustomSupplyQueryService>(); 
  
- 
+// IAM Bounded Context
+
+// TokenSettings Configuration
+
+builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IHashingService, HashingService>();
+builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
+
+// Add Mediator for CQRS
+builder.Services.AddScoped(typeof(ICommandPipelineBehavior<>), typeof(LoggingCommandBehavior<>));
+builder.Services.AddCortexMediator(
+    configuration: builder.Configuration,
+    handlerAssemblyMarkerTypes: new[] { typeof(Program) }, configure: options =>
+    {
+        options.AddOpenCommandPipelineBehavior(typeof(LoggingCommandBehavior<>));
+        //options.AddDefaultBehaviors();
+    });
+
 var app = builder.Build();
 
 // Verify if the database exists and create it if it doesn't
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    
-    
     
     var context = services.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
@@ -147,6 +231,8 @@ app.Use(async (context, next) =>
 });
 
 // app.UseHttpsRedirection();
+
+app.UseRequestLocalization();
 
 app.UseAuthorization();
 
