@@ -1,6 +1,7 @@
 using Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Restock.Platform.API.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Restock.Platform.API.Planning.Domain.Model.Aggregates;
 using Restock.Platform.API.Planning.Domain.Model.Entities;
 using Restock.Platform.API.Planning.Domain.Model.ValueObjects;
@@ -16,6 +17,8 @@ namespace Restock.Platform.API.Shared.Infrastructure.Persistence.EFC.Configurati
 /// </summary>
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
+   
+    
     // Planning
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<RecipeSupply> RecipeSupplies { get; set; }
@@ -37,6 +40,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         base.OnModelCreating(builder);
 
+        //Iam
+        builder.ApplyIamConfiguration();
+        
         // ========== Recipe ==========
         builder.Entity<Recipe>(recipe =>
         {
