@@ -2,7 +2,7 @@
 
 public interface IIamContextFacade
 {
-    Task<int> CreateUser(string username, string password);
+    Task<int> CreateUser(string username, string password, int roleId);
     Task<int> FetchUserIdByUsername(string username);
     Task<string> FetchUsernameByUserId(int userId);
 }
