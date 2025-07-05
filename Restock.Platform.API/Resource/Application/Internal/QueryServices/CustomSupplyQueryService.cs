@@ -9,11 +9,11 @@ public class CustomSupplyQueryService(ICustomSupplyRepository customSupplyReposi
 {
     public async Task<CustomSupply?> Handle(GetCustomSupplyByIdQuery query)
     {
-        return await customSupplyRepository.FindByIdAsync(query.CustomSupplyId);
+        return await customSupplyRepository.FindByIdWithSupplyAsync(query.CustomSupplyId);
     }
 
     public async Task<IEnumerable<CustomSupply?>> Handle(GetAllCustomSuppliesQuery query)
     {
-        return await customSupplyRepository.ListAsync();
+        return await customSupplyRepository.ListWithSupplyAsync();
     }
 }
