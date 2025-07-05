@@ -17,6 +17,7 @@ using Restock.Platform.API.Resource.Domain.Repositories;
 using Restock.Platform.API.Resource.Domain.Services;
 using Restock.Platform.API.Resource.Infrastructure.Persistence.EFC.Repositories;
 using Restock.Platform.API.Resource.Infrastructure.Persistence.Seeders;
+using Restock.Platform.API.Shared.Domain.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -125,6 +126,24 @@ using (var scope = app.Services.CreateScope())
 
 // Apply CORS Policy
 app.UseCors("AllowAllPolicy");
+
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (BusinessRuleException ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsJsonAsync(new { error = "Internal Server Error" });
+    }
+});
 
 // app.UseHttpsRedirection();
 
