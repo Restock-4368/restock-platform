@@ -1,5 +1,6 @@
 using Restock.Platform.API.Resource.Domain.Model.Aggregates;
 using Restock.Platform.API.Resource.Domain.Model.Commands;
+using Restock.Platform.API.Shared.Domain.Exceptions;
 
 namespace Restock.Platform.API.Resource.Domain.Model.Entities;
 
@@ -17,7 +18,18 @@ public class Batch
     private Batch() { }
     public Batch( int customSupplyId, int stock, DateTime? expirationDate, int userId)
     {
-        Id = 0; 
+        if (customSupplyId <= 0)
+            throw new BusinessRuleException("CustomSupplyId must be greater than 0.");
+
+        if (stock < 0)
+            throw new BusinessRuleException("Stock cannot be negative.");
+
+        if (userId <= 0)
+            throw new BusinessRuleException("UserId must be greater than 0.");
+ 
+        if (expirationDate.HasValue && expirationDate.Value < DateTime.UtcNow)
+            throw new BusinessRuleException("Expiration date cannot be in the past.");
+ 
         CustomSupplyId = customSupplyId;
         Stock = stock;
         ExpirationDate = expirationDate;

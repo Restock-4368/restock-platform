@@ -7,4 +7,10 @@ namespace Restock.Platform.API.Resource.Domain.Repositories;
 public interface IBatchRepository : IBaseRepository<Batch>
 {
     Task<IEnumerable<Batch>> ListByIdsAsync(IEnumerable<int> batchIds);
+    
+    Task<bool> ExistsBySupplyIdAndUserIdAsync(int supplyId, int userId);
+
+    Task<IEnumerable<Batch>> ListByCustomSupplyId(int customSupplyId);
+    
+    Task<IEnumerable<Batch>> ListWithCustomSupplyAsync();
 }

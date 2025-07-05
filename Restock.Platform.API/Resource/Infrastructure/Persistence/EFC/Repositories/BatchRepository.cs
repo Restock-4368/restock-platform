@@ -20,4 +20,25 @@ public class BatchRepository(AppDbContext context) : BaseRepository<Batch>(conte
             .Where(b => batchIds.Contains(b.Id))
             .ToListAsync();
     }
+
+    public async Task<bool> ExistsBySupplyIdAndUserIdAsync(int supplyId, int userId)
+    {
+        return await Context.Set<Batch>()
+            .Include(b => b.CustomSupply)
+            .AnyAsync(b => b.CustomSupply.SupplyId == supplyId && b.UserId == userId);
+    }
+
+    public async Task<IEnumerable<Batch>> ListByCustomSupplyId(int customSupplyId)
+    {
+        return await Context.Set<Batch>()
+            .Where(b => b.CustomSupplyId == customSupplyId)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Batch>> ListWithCustomSupplyAsync()
+    {
+        return await Context.Set<Batch>()
+            .Include(b => b.CustomSupply)
+            .ToListAsync();
+    }
 }

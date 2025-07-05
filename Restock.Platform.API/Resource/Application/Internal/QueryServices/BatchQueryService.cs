@@ -14,6 +14,6 @@ public class BatchQueryService(IBatchRepository batchRepository) : IBatchQuerySe
 
     public async Task<IEnumerable<Batch?>> Handle(GetAllBatchesQuery query)
     {
-        return await batchRepository.ListAsync();
+        return await batchRepository.ListWithCustomSupplyAsync();
     }
 }
