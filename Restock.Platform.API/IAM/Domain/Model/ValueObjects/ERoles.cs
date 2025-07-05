@@ -2,6 +2,6 @@
 
 public enum ERoles
 {
-    RestaurantAdministrator, //id = 1
-    RestaurantSupplier 
+    RestaurantSupplier = 1,
+    RestaurantAdministrator = 2
 }

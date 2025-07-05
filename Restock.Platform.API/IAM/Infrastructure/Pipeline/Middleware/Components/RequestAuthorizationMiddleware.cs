@@ -6,7 +6,6 @@ using Restock.Platform.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace Restock.Platform.API.IAM.Infrastructure.Pipeline.Middleware.Components;
 
-
 /**
  * RequestAuthorizationMiddleware is a custom middleware.
  * This middleware is used to authorize requests.
@@ -27,6 +26,7 @@ public class RequestAuthorizationMiddleware(RequestDelegate next, ILogger<Reques
         IUserQueryService userQueryService,
         ITokenService tokenService)
     {
+        
         _logger.LogInformation("Entering InvokeAsync");
         // skip authorization if endpoint is decorated with [AllowAnonymous] attribute
         var allowAnonymous = context.Request.HttpContext.GetEndpoint()!.Metadata

@@ -19,6 +19,7 @@ using Restock.Platform.API.IAM.Domain.Repositories;
 using Restock.Platform.API.IAM.Domain.Services;
 using Restock.Platform.API.IAM.Infrastructure.Hashing.BCrypt.Services;
 using Restock.Platform.API.IAM.Infrastructure.Persistence.EFC.Repositories;
+using Restock.Platform.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using Restock.Platform.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using Restock.Platform.API.IAM.Infrastructure.Tokens.JWT.Services;
 using Restock.Platform.API.IAM.Interfaces.ACL;
@@ -235,6 +236,8 @@ app.Use(async (context, next) =>
 app.UseRequestLocalization();
 
 app.UseAuthorization();
+
+app.UseRequestAuthorization();
 
 app.MapControllers();
 

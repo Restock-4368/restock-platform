@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Restock.Platform.API.IAM.Domain.Services;
 using Restock.Platform.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using Restock.Platform.API.IAM.Interfaces.REST.Resources;
-using Restock.Platform.API.IAM.Interfaces.REST.Transform;
-using Restock.Platform.API.Shared.Domain.Exceptions;
+using Restock.Platform.API.IAM.Interfaces.REST.Transform; 
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Restock.Platform.API.IAM.Interfaces;

@@ -1,6 +1,6 @@
 ﻿using Cortex.Mediator.Notifications;
 
-namespace Restock.Platform.API.Shared.Domain.Events;
+namespace Restock.Platform.API.Shared.Domain.Model.Events;
 
 
 /// <summary>

@@ -1,4 +1,4 @@
-﻿using Restock.Platform.API.Shared.Domain.Events;
+﻿using Restock.Platform.API.Shared.Domain.Model.Events;
 
 namespace Restock.Platform.API.Resource.Domain.Model.Events;
 
