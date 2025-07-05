@@ -38,7 +38,6 @@
 
     <ItemGroup>
       <Folder Include="Analytics\" />
-      <Folder Include="IAM\" />
       <Folder Include="Monitoring\Application\" />
       <Folder Include="Monitoring\Domain\" />
       <Folder Include="Monitoring\Infrastructure\" />
