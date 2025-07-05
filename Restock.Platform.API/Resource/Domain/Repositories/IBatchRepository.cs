@@ -13,4 +13,6 @@ public interface IBatchRepository : IBaseRepository<Batch>
     Task<IEnumerable<Batch>> ListByCustomSupplyId(int customSupplyId);
     
     Task<IEnumerable<Batch>> ListWithCustomSupplyAsync();
+    
+    Task<Batch?> FindByIdWithCustomSupplyAsync(int id);
 }
