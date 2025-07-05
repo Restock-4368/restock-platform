@@ -110,7 +110,7 @@ public static class ModelBuilderExtensions
             // Clave primaria
             cs.HasKey(x => x.Id);
             cs.Property(x => x.Id)
-                .HasColumnName("custom_supply_id")
+                .HasColumnName("id")
                 .ValueGeneratedOnAdd();
 
             // FK a Supply
@@ -153,7 +153,7 @@ public static class ModelBuilderExtensions
         { 
             b.HasKey(x => x.Id);
             b.Property(x => x.Id)
-                .HasColumnName("batch_id")
+                .HasColumnName("id")
                 .ValueGeneratedOnAdd();      
  
             b.Property(x => x.CustomSupplyId)
