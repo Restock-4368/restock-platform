@@ -20,4 +20,10 @@ public class OrderRepository(AppDbContext context) : BaseRepository<OrderToSuppl
             .Include(o => o.RequestedBatches)
             .FirstOrDefaultAsync(o => o.Id == id);
     }
+
+    public async Task<bool> ExistsByBatchId(int batchId)
+    {
+        return await Context.Set<OrderToSupplier>()
+            .AnyAsync(order => order.RequestedBatches.Any(rb => rb.BatchId == batchId));
+    }
 }

@@ -1,6 +1,7 @@
 using Restock.Platform.API.Resource.Domain.Model.Commands;
 using Restock.Platform.API.Resource.Domain.Model.Entities;
 using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
+using Restock.Platform.API.Shared.Domain.Exceptions;
 
 namespace Restock.Platform.API.Resource.Domain.Model.Aggregates;
 /// <summary>
@@ -79,7 +80,15 @@ public partial class OrderToSupplier
     /// <param name="supplierId">Supplier ID.</param>  
     public OrderToSupplier(string? description, int adminRestaurantId, int supplierId)
     {
-        Id = 0;
+        if (adminRestaurantId <= 0)
+            throw new BusinessRuleException("AdminRestaurantId must be greater than zero.");
+        if (supplierId <= 0)
+            throw new BusinessRuleException("SupplierId must be greater than zero.");
+        if (adminRestaurantId == supplierId)
+            throw new BusinessRuleException("AdminRestaurantId and SupplierId cannot be the same.");
+        if (string.IsNullOrWhiteSpace(description))
+            throw new BusinessRuleException("Description cannot be empty.");
+        
         EstimatedShipDate = null;
         EstimatedShipTime = null;
         Description = description;
@@ -146,5 +155,22 @@ public partial class OrderToSupplier
     {
         State = EOrderToSupplierStates.Delivered;
     }
+    
+    public void RecalculateTotalPrice(IEnumerable<Batch> batches)
+    {
+        decimal total = 0;
+
+        foreach (var requestedBatch in _requestedBatches)
+        { 
+            var batch = batches.FirstOrDefault(b => b.Id == requestedBatch.BatchId);
+            if (batch != null && batch.CustomSupply != null)
+            {
+                 total += (decimal)requestedBatch.Quantity * batch.CustomSupply.Price;
+            }
+        }
+
+        TotalPrice = total;
+    }
+    
 }
  

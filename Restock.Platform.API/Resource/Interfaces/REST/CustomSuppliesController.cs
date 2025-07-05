@@ -19,7 +19,7 @@ namespace Restock.Platform.API.Resource.Interfaces.REST;
 public class CustomSuppliesController(ICustomSupplyCommandService customSupplyCommandService,
     ICustomSupplyQueryService customSupplyQueryService) : ControllerBase
 {
-    [HttpGet("{CustomSupplyId:int}")]
+    [HttpGet("{customSupplyId:int}")]
     [SwaggerOperation(
         Summary = "Get CustomSupply by Id",
         Description = "Returns a CustomSupply by its unique identifier.",
@@ -71,8 +71,8 @@ public class CustomSuppliesController(ICustomSupplyCommandService customSupplyCo
         return CreatedAtAction(nameof(GetCustomSupplyById), new { CustomSupplyId  = customSupplyResource.Id }, customSupplyResource); 
     }
     
-    // DELETE /api/v1/CustomSupplyes/{CustomSupplyId}
-    [HttpDelete("{CustomSupplyId:int}")]
+    // DELETE /api/v1/custom-supplies/{CustomSupplyId}
+    [HttpDelete("{customSupplyId:int}")]
     [SwaggerOperation(
         Summary     = "Delete a CustomSupply",
         Description = "Deletes the CustomSupply with the given id.",

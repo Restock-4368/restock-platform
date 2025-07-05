@@ -8,4 +8,6 @@ public interface IOrderRepository : IBaseRepository<OrderToSupplier>
 {  
     Task<IEnumerable<OrderToSupplier>> ListAsyncWithRequestedBatches();
     Task<OrderToSupplier> FindByIdAsyncWithRequestedBatches(int id);
+    
+    Task<bool> ExistsByBatchId(int batchId);
 }
