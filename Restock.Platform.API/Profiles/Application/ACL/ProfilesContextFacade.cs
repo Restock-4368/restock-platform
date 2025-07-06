@@ -12,21 +12,14 @@ public class ProfilesContextFacade(
     IBusinessQueryService businessQueryService)
     : IProfilesContextFacade
 {
-    public async Task<int> CreateProfile(string firstName, string lastName, string avatar, string email, 
-        string phone, string address, string country, int userId, int businessId)
+    public async Task CreateProfile(int userId, int businessId)
     {
         var createProfileCommand = new CreateProfileCommand(
-            firstName,
-            lastName,
-            avatar,
-            email,
-            phone,
-            address,
-            country,
             userId,
             businessId);
-        var profile = await profileCommandService.Handle(createProfileCommand);
-        return profile?.Id ?? 0;
+        
+        await profileCommandService.Handle(createProfileCommand);
+         
     }
 
     public async Task DeleteProfile(int profileId)
@@ -42,14 +35,9 @@ public class ProfilesContextFacade(
         return profile?.Id ?? 0;
     }
     
-    public async Task<int> CreateBusiness(string name, string email, string phone, string address, string categories)
+    public async Task<int> CreateBusiness()
     {
-        var createBusinessCommand = new CreateBusinessCommand(
-            name,
-            email,
-            phone,
-            address,
-            categories);
+        var createBusinessCommand = new CreateBusinessCommand();
         var business = await businessCommandService.Handle(createBusinessCommand);
         return business?.Id ?? 0;
     }

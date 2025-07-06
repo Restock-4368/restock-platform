@@ -2,27 +2,16 @@
 
 public interface IProfilesContextFacade
 {
-    Task<int> CreateProfile(
-        string firstName,
-        string lastName,
-        string avatar,
-        string email,
-        string phone,
-        string address, 
-        string country,
+    Task CreateProfile(
         int userId,
-        int businessId);
+        int businessId
+        );
     
     Task DeleteProfile(int profileId);
     
     Task<int> FetchProfileIdByEmail(string email);
     
-    Task<int> CreateBusiness(
-        string name, 
-        string email,
-        string phone,
-        string address, 
-        string categories);
+    Task<int> CreateBusiness();
 
     Task DeleteBusiness(int businessId);
 

@@ -32,7 +32,7 @@ public class Business
         Categories = categories;
     }
 
-    public Business(CreateBusinessCommand command) : this(command.Name, command.Email, command.Phone, command.Address, command.Categories)
+    public Business(CreateBusinessCommand command) : this()
     {
         
     }
