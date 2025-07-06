@@ -12,4 +12,18 @@ public class ProfileRepository(AppDbContext context) : BaseRepository<Profile>(c
     {
         return await Context.Set<Profile>().FirstOrDefaultAsync(p => p.Email == email);
     }
+
+    public async Task<Profile?> FindByIdWithBusinessAsync(int id)
+    {
+        return await Context.Set<Profile>()
+            .Include(b => b.Business)
+            .FirstOrDefaultAsync(b => b.Id == id);
+    }
+
+    public async Task<IEnumerable<Profile>> ListWithBusinessAsync()
+    {
+        return await Context.Set<Profile>()
+            .Include(b => b.Business)
+            .ToListAsync();
+    } 
 }

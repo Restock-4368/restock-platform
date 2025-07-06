@@ -10,12 +10,12 @@ public class ProfileQueryService(
 {
     public async Task<IEnumerable<Profile>> Handle(GetAllProfilesQuery query)
     {
-        return await profileRepository.ListAsync();
+        return await profileRepository.ListWithBusinessAsync();
     }
 
     public async Task<Profile?> Handle(GetProfileByIdQuery query)
     {
-        return await profileRepository.FindByIdAsync(query.ProfileId);
+        return await profileRepository.FindByIdWithBusinessAsync(query.ProfileId);
     } 
 
     public async Task<Profile?> Handle(GetProfileByEmailQuery query)
