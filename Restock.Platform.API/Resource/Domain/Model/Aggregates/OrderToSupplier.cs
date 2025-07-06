@@ -63,8 +63,6 @@ public partial class OrderToSupplier
     /// Gets or sets a value indicating whether the order was partially accepted.
     /// </summary>
     public bool PartiallyAccepted { get; set; } = false;
-
-    
     
     private readonly List<OrderToSupplierBatch> _requestedBatches = new();
     public IReadOnlyCollection<OrderToSupplierBatch> RequestedBatches => _requestedBatches.AsReadOnly();
