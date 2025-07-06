@@ -47,18 +47,18 @@ public class BusinessesController(
         return Ok(businessResources);
     }
 
-    [HttpPost]
-    [SwaggerOperation("Create Business", "Create a new Business.", OperationId = "CreateBusiness")]
-    [SwaggerResponse(201, "The Business was created.", typeof(BusinessResource))]
-    [SwaggerResponse(400, "The Business was not created.")]
-    public async Task<IActionResult> CreateBusiness(CreateBusinessResource resource)
-    {
-        var createBusinessCommand = CreateBusinessCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var business = await businessCommandService.Handle(createBusinessCommand);
-        if (business is null) return BadRequest();
-        var businessResource = BusinessResourceFromEntityAssembler.ToResourceFromEntity(business);
-        return CreatedAtAction(nameof(GetBusinessById), new { BusinessId = business.Id }, businessResource);
-    }
+    // [HttpPost]
+    // [SwaggerOperation("Create Business", "Create a new Business.", OperationId = "CreateBusiness")]
+    // [SwaggerResponse(201, "The Business was created.", typeof(BusinessResource))]
+    // [SwaggerResponse(400, "The Business was not created.")]
+    // public async Task<IActionResult> CreateBusiness(CreateBusinessResource resource)
+    // {
+    //     var createBusinessCommand = CreateBusinessCommandFromResourceAssembler.ToCommandFromResource(resource);
+    //     var business = await businessCommandService.Handle(createBusinessCommand);
+    //     if (business is null) return BadRequest();
+    //     var businessResource = BusinessResourceFromEntityAssembler.ToResourceFromEntity(business);
+    //     return CreatedAtAction(nameof(GetBusinessById), new { BusinessId = business.Id }, businessResource);
+    // }
      
     [HttpDelete("{businessId:int}")]
     [SwaggerOperation(
