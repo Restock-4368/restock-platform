@@ -24,6 +24,14 @@ using Restock.Platform.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using Restock.Platform.API.IAM.Infrastructure.Tokens.JWT.Services;
 using Restock.Platform.API.IAM.Interfaces.ACL;
 using Restock.Platform.API.IAM.Interfaces.ACL.Services;
+using Restock.Platform.API.Profiles.Application.ACL;
+using Restock.Platform.API.Profiles.Application.Internal.CommandServices;
+using Restock.Platform.API.Profiles.Application.Internal.QueryServices;
+using Restock.Platform.API.Profiles.Domain.Repositories;
+using Restock.Platform.API.Profiles.Domain.Services;
+using Restock.Platform.API.Profiles.Infrastructure.Persistence.EFC.Repositories;
+using Restock.Platform.API.Profiles.Infrastructure.Persistence.Seeders;
+using Restock.Platform.API.Profiles.Interfaces.ACL;
 using Restock.Platform.API.Resource.Application.Internal.CommandServices;
 using Restock.Platform.API.Resource.Application.Internal.QueryServices;
 using Restock.Platform.API.Resource.Domain.Repositories;
@@ -166,6 +174,21 @@ builder.Services.AddScoped<ICustomSupplyRepository, CustomSupplyRepository>();
 builder.Services.AddScoped<ICustomSupplyCommandService, CustomSupplyCommandService>(); 
 builder.Services.AddScoped<ICustomSupplyQueryService, CustomSupplyQueryService>(); 
  
+//Profiles Bounded Context
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IProfileCommandService, ProfileCommandService>();
+builder.Services.AddScoped<IProfileQueryService, ProfileQueryService>();
+builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
+
+builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
+builder.Services.AddScoped<IBusinessCommandService, BusinessCommandService>();
+builder.Services.AddScoped<IBusinessQueryService, BusinessQueryService>();
+builder.Services.AddScoped<IBusinessesContextFacade, BusinessesContextFacade>();
+
+builder.Services.AddScoped<IBusinessCategoryRepository, BusinessCategoryRepository>(); 
+builder.Services.AddScoped<IBusinessCategoryQueryService, BusinessCategoryQueryService>();
+
+
 // IAM Bounded Context
 
 // TokenSettings Configuration
@@ -200,6 +223,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
         
     await SupplySeeder.SeedAsync(services);
+    await BusinessCategorySeeder.SeedAsync(services);
 }
 
 

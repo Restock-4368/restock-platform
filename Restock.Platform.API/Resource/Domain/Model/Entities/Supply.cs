@@ -16,9 +16,8 @@ public class Supply
      
     public Supply() { }
  
-    public Supply(int id, string name, string description, bool perishable, string unitName, string unitAbbreviation, string category)
+    public Supply(string name, string description, bool perishable, string unitName, string unitAbbreviation, string category)
     {
-        Id = id;
         Name = name;
         Description = description;
         Perishable = perishable;

@@ -42,7 +42,6 @@
       <Folder Include="Monitoring\Domain\" />
       <Folder Include="Monitoring\Infrastructure\" />
       <Folder Include="Monitoring\Interfaces\" />
-      <Folder Include="Profiles\" />
       <Folder Include="Shared\Domain\Model\" />
       <Folder Include="Subscription\" />
     </ItemGroup>
