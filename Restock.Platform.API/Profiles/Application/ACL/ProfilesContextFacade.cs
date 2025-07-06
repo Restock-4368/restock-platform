@@ -7,7 +7,9 @@ namespace Restock.Platform.API.Profiles.Application.ACL;
 
 public class ProfilesContextFacade(
     IProfileCommandService profileCommandService,
-    IProfileQueryService profileQueryService)
+    IProfileQueryService profileQueryService,
+    IBusinessCommandService businessCommandService,
+    IBusinessQueryService businessQueryService)
     : IProfilesContextFacade
 {
     public async Task<int> CreateProfile(string firstName, string lastName, string avatar, string email, 
@@ -38,5 +40,23 @@ public class ProfilesContextFacade(
         var getProfileByEmailQuery = new GetProfileByEmailQuery(email);
         var profile = await profileQueryService.Handle(getProfileByEmailQuery);
         return profile?.Id ?? 0;
+    }
+    
+    public async Task<int> CreateBusiness(string name, string email, string phone, string address, string categories)
+    {
+        var createBusinessCommand = new CreateBusinessCommand(
+            name,
+            email,
+            phone,
+            address,
+            categories);
+        var business = await businessCommandService.Handle(createBusinessCommand);
+        return business?.Id ?? 0;
+    }
+
+    public async Task DeleteBusiness(int businessId)
+    {
+        var command = new DeleteBusinessCommand(businessId);
+        await businessCommandService.Handle(command);
     }
 }

@@ -183,7 +183,6 @@ builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 builder.Services.AddScoped<IBusinessCommandService, BusinessCommandService>();
 builder.Services.AddScoped<IBusinessQueryService, BusinessQueryService>();
-builder.Services.AddScoped<IBusinessesContextFacade, BusinessesContextFacade>();
 
 builder.Services.AddScoped<IBusinessCategoryRepository, BusinessCategoryRepository>(); 
 builder.Services.AddScoped<IBusinessCategoryQueryService, BusinessCategoryQueryService>();

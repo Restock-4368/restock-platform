@@ -16,5 +16,14 @@ public interface IProfilesContextFacade
     Task DeleteProfile(int profileId);
     
     Task<int> FetchProfileIdByEmail(string email);
+    
+    Task<int> CreateBusiness(
+        string name, 
+        string email,
+        string phone,
+        string address, 
+        string categories);
+
+    Task DeleteBusiness(int businessId);
 
 }
