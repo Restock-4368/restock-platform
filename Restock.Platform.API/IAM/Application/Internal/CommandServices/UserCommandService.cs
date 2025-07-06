@@ -1,4 +1,5 @@
 ﻿using Restock.Platform.API.IAM.Application.Internal.OutboundServices;
+using Restock.Platform.API.IAM.Application.Internal.OutboundServices.ACL;
 using Restock.Platform.API.IAM.Domain.Model.Aggregates;
 using Restock.Platform.API.IAM.Domain.Model.Commands;
 using Restock.Platform.API.IAM.Domain.Repositories;
@@ -20,7 +21,8 @@ public class UserCommandService(
     IUserRepository userRepository,
     ITokenService tokenService,
     IHashingService hashingService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    ExternalProfilesService externalProfilesService)
     : IUserCommandService
 {
     /**
@@ -38,7 +40,7 @@ public class UserCommandService(
             throw new BusinessRuleException("Invalid username or password");
          
         var token = tokenService.GenerateToken(user);
-       
+        
         return (user, token);
     }
 
@@ -56,10 +58,14 @@ public class UserCommandService(
 
         var hashedPassword = hashingService.HashPassword(command.Password);
         var user = new User(command.Username, hashedPassword, command.RoleId);
+         
         try
         {
             await userRepository.AddAsync(user);
             await unitOfWork.CompleteAsync();
+            
+            var businessId = await externalProfilesService.CreateBusiness();
+            await externalProfilesService.CreateProfile(user.Id, businessId);
         }
         catch (Exception e)
         {
