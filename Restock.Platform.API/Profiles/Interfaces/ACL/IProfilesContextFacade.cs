@@ -5,6 +5,7 @@ public interface IProfilesContextFacade
     Task<int> CreateProfile(
         string firstName,
         string lastName,
+        string avatar,
         string email,
         string phone,
         string address, 

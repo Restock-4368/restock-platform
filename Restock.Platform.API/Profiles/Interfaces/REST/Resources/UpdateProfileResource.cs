@@ -4,6 +4,7 @@ public record UpdateProfileResource(
     string Id, 
     string FirstName,
     string LastName,
+    string Avatar,
     string Email, 
     string Phone,
     string Address, 

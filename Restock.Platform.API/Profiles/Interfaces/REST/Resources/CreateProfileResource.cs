@@ -3,6 +3,7 @@
 public record CreateProfileResource(
     string FirstName,
     string LastName,
+    string Avatar,
     string Email, 
     string Phone,
     string Address, 

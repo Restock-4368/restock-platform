@@ -10,12 +10,13 @@ public class ProfilesContextFacade(
     IProfileQueryService profileQueryService)
     : IProfilesContextFacade
 {
-    public async Task<int> CreateProfile(string firstName, string lastName, string email, 
+    public async Task<int> CreateProfile(string firstName, string lastName, string avatar, string email, 
         string phone, string address, string country, int userId, int businessId)
     {
         var createProfileCommand = new CreateProfileCommand(
             firstName,
             lastName,
+            avatar,
             email,
             phone,
             address,

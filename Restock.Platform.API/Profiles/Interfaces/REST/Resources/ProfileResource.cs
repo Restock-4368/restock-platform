@@ -3,9 +3,11 @@
 public record ProfileResource(
     int Id,
     string FullName,
+    string Avatar,
     string Email,
     string Phone,
     string Address,
     string Country, 
     int UserId,
-    int BusinessId);
+    int BusinessId,
+    BusinessResource Business);

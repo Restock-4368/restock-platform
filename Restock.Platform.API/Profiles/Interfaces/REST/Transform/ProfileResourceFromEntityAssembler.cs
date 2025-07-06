@@ -10,11 +10,13 @@ public static class ProfileResourceFromEntityAssembler
         return new ProfileResource(
             entity.Id, 
             entity.FullName, 
+            entity.Avatar.Value,
             entity.Email, 
             entity.Phone, 
             entity.Address, 
             entity.Country,
             entity.UserId.Value,
-            entity.BusinessId);
+            entity.BusinessId,
+            entity.Business != null ? BusinessResourceFromEntityAssembler.ToResourceFromEntity(entity.Business) : null);
     }
 }

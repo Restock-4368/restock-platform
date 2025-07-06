@@ -14,6 +14,7 @@ public static class UpdateProfileCommandFromResourceAssembler
             profileId,
             resource.FirstName,
             resource.LastName,
+            resource.Avatar,
             resource.Email, 
             resource.Phone,
             resource.Address,
