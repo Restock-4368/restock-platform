@@ -10,10 +10,21 @@ namespace Restock.Platform.API.Profiles.Application.Internal.CommandServices;
  
 public class BusinessCommandService(
     IBusinessRepository businessRepository,
+    IBusinessCategoryRepository businessCategoryRepository,
     IUnitOfWork unitOfWork): IBusinessCommandService
 {
     public async Task<Business?> Handle(CreateBusinessCommand command)
     {
+        var validCategories = await businessCategoryRepository.ListAsync();
+        var allowedNames = validCategories.Select(c => c.Name).ToHashSet();
+
+        var inputCategories = command.Categories.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        var invalid = inputCategories.Where(c => !allowedNames.Contains(c)).ToList();
+         
+        if (invalid.Any())
+            throw new BusinessRuleException($"Invalid categories: {string.Join(", ", invalid)}");
+        
         var business = new Business(command);
         try
         {
@@ -30,6 +41,16 @@ public class BusinessCommandService(
 
     public async Task Handle(UpdateBusinessCommand command)
     {
+        var validCategories = await businessCategoryRepository.ListAsync();
+        var allowedNames = validCategories.Select(c => c.Name).ToHashSet();
+
+        var inputCategories = command.Categories.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        var invalid = inputCategories.Where(c => !allowedNames.Contains(c)).ToList();
+         
+        if (invalid.Any())
+            throw new BusinessRuleException($"Invalid categories: {string.Join(", ", invalid)}");
+
         var business = await businessRepository.FindByIdAsync(command.BusinessId);
 
         if (business is null)
