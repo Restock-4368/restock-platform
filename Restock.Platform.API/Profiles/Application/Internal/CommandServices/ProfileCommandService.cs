@@ -49,6 +49,7 @@ public class ProfileCommandService(
         profile.Update(
             command.FirstName,
             command.LastName,
+            command.Avatar,
             command.Email,
             command.Phone,
             command.Address,

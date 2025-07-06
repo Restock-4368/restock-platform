@@ -60,12 +60,13 @@ public class Profile
         
     }
     
-    public void Update(string? firstName, string? lastName, string? email, 
+    public void Update(string? firstName, string? lastName, string? avatar, string? email, 
         string? phone, string? address, string? country)
     {   
         if(firstName != null && lastName != null)
             Name = new PersonName(firstName, lastName);
         
+        Avatar = avatar != null ? new Avatar(avatar) : Avatar;
         Email = email ?? Email;
         Address = address ?? Address; 
         Phone = phone ?? Phone; 
