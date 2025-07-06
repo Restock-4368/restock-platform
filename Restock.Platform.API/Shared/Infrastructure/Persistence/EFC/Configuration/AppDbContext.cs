@@ -5,6 +5,8 @@ using Restock.Platform.API.IAM.Infrastructure.Persistence.EFC.Configuration.Exte
 using Restock.Platform.API.Planning.Domain.Model.Aggregates;
 using Restock.Platform.API.Planning.Domain.Model.Entities;
 using Restock.Platform.API.Planning.Domain.Model.ValueObjects;
+using Restock.Platform.API.Profiles.Domain.Model.Entities;
+using Restock.Platform.API.Profiles.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Restock.Platform.API.Resource.Domain.Model.Aggregates;
 using Restock.Platform.API.Resource.Domain.Model.Entities;
 using Restock.Platform.API.Resource.Domain.Model.ValueObjects;
@@ -29,6 +31,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<CustomSupply> CustomSupplies { get; set; }
     public DbSet<Batch> Batches { get; set; }
     public DbSet<Supply> Supplies { get; set; }
+    
+    //Profiles
+    public DbSet<BusinessCategory> BusinessCategories { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
@@ -94,6 +99,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         });
         
         builder.ApplyResourceConfiguration();
+        
+        builder.ApplyProfilesConfiguration();
         
         builder.UseSnakeCaseNamingConvention();
 

@@ -13,8 +13,7 @@ public class Business
     public string Phone { get; private set; } 
     
     public string Categories { get; private set; } 
-     
-
+    
     public Business()
     {
         Name = string.Empty;
