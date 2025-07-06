@@ -14,6 +14,7 @@ using Cortex.Mediator.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Restock.Platform.API.IAM.Application.Internal.CommandServices;
 using Restock.Platform.API.IAM.Application.Internal.OutboundServices;
+using Restock.Platform.API.IAM.Application.Internal.OutboundServices.ACL;
 using Restock.Platform.API.IAM.Application.Internal.QueryServices;
 using Restock.Platform.API.IAM.Domain.Repositories;
 using Restock.Platform.API.IAM.Domain.Services;
@@ -200,6 +201,7 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
+builder.Services.AddScoped<ExternalProfilesService>();
 
 // Add Mediator for CQRS
 builder.Services.AddScoped(typeof(ICommandPipelineBehavior<>), typeof(LoggingCommandBehavior<>));
