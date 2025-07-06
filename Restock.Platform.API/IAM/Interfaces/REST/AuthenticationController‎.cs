@@ -6,7 +6,7 @@ using Restock.Platform.API.IAM.Interfaces.REST.Resources;
 using Restock.Platform.API.IAM.Interfaces.REST.Transform; 
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Restock.Platform.API.IAM.Interfaces;
+namespace Restock.Platform.API.IAM.Interfaces.REST;
 
 
 [Authorize]
