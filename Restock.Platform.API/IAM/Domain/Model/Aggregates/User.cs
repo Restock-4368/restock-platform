@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Restock.Platform.API.IAM.Domain.Model.Entities;
 using Restock.Platform.API.IAM.Domain.Model.ValueObjects;
 using Restock.Platform.API.Shared.Domain.Exceptions;
 
@@ -24,7 +25,7 @@ public partial class User
 
     // Navigation property
     [NotMapped]
-    public ERoles Role { get; private set; }
+    public Role Role { get; private set; }
     
  
     public User(string username, string hashedPassword, int roleId)
@@ -35,7 +36,7 @@ public partial class User
         Username = username;
         PasswordHash = hashedPassword;
         RoleId = roleId;
-        Role = (ERoles)roleId;
+        Role = new Role((ERoles)roleId);
     }
     public User() { }
    
