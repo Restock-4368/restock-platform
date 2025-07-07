@@ -14,7 +14,9 @@ using Cortex.Mediator.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Restock.Platform.API.IAM.Application.Internal.CommandServices;
 using Restock.Platform.API.IAM.Application.Internal.OutboundServices;
+using Restock.Platform.API.IAM.Application.Internal.OutboundServices.ACL;
 using Restock.Platform.API.IAM.Application.Internal.QueryServices;
+using Restock.Platform.API.IAM.Domain.Model.Commands;
 using Restock.Platform.API.IAM.Domain.Repositories;
 using Restock.Platform.API.IAM.Domain.Services;
 using Restock.Platform.API.IAM.Infrastructure.Hashing.BCrypt.Services;
@@ -200,6 +202,11 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
+builder.Services.AddScoped<ExternalProfilesService>();
+
+builder.Services.AddScoped<IRoleRepository, RoleRepository>(); 
+builder.Services.AddScoped<IRoleQueryService, RoleQueryService>();
+builder.Services.AddScoped<IRoleCommandService, RoleCommandService>();
 
 // Add Mediator for CQRS
 builder.Services.AddScoped(typeof(ICommandPipelineBehavior<>), typeof(LoggingCommandBehavior<>));
@@ -223,6 +230,9 @@ using (var scope = app.Services.CreateScope())
         
     await SupplySeeder.SeedAsync(services);
     await BusinessCategorySeeder.SeedAsync(services);
+    
+    var roleSeeder = scope.ServiceProvider.GetRequiredService<IRoleCommandService>();
+    await roleSeeder.Handle(new SeedRolesCommand());
 }
 
 

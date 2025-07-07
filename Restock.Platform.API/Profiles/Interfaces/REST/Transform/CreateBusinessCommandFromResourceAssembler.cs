@@ -7,12 +7,7 @@ public static class CreateBusinessCommandFromResourceAssembler
 {
     public static CreateBusinessCommand ToCommandFromResource(CreateBusinessResource resource)
     {
-        return new CreateBusinessCommand(
-            resource.Name,
-            resource.Email,
-            resource.Phone,
-            resource.Address,
-            resource.Categories
+        return new CreateBusinessCommand( 
         );
     }
 }

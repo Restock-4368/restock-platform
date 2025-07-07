@@ -17,13 +17,6 @@ public class BusinessCommandService(
     {
         var validCategories = await businessCategoryRepository.ListAsync();
         var allowedNames = validCategories.Select(c => c.Name).ToHashSet();
-
-        var inputCategories = command.Categories.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-        var invalid = inputCategories.Where(c => !allowedNames.Contains(c)).ToList();
-         
-        if (invalid.Any())
-            throw new BusinessRuleException($"Invalid categories: {string.Join(", ", invalid)}");
         
         var business = new Business(command);
         try

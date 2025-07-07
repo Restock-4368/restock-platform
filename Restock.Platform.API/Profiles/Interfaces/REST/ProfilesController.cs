@@ -46,19 +46,19 @@ public class ProfilesController(
     
     //Commands
 
-    [HttpPost]
-    [SwaggerOperation("Create Profile", "Create a new profile.", OperationId = "CreateProfile")]
-    [SwaggerResponse(201, "The profile was created.", typeof(ProfileResource))]
-    [SwaggerResponse(400, "The profile was not created.")]
-    public async Task<IActionResult> CreateProfile(CreateProfileResource resource)
-    {
-        var createProfileCommand = CreateProfileCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var profile = await profileCommandService.Handle(createProfileCommand);
-        if (profile is null) return BadRequest();
-        var profileResource = ProfileResourceFromEntityAssembler.ToResourceFromEntity(profile);
-        return CreatedAtAction(nameof(GetProfileById), new { profileId = profile.Id }, profileResource);
-    }
-     
+    // [HttpPost]
+    // [SwaggerOperation("Create Profile", "Create a new profile.", OperationId = "CreateProfile")]
+    // [SwaggerResponse(201, "The profile was created.", typeof(ProfileResource))]
+    // [SwaggerResponse(400, "The profile was not created.")]
+    // public async Task<IActionResult> CreateProfile(CreateProfileResource resource)
+    // {
+    //     var createProfileCommand = CreateProfileCommandFromResourceAssembler.ToCommandFromResource(resource);
+    //     var profile = await profileCommandService.Handle(createProfileCommand);
+    //     if (profile is null) return BadRequest();
+    //     var profileResource = ProfileResourceFromEntityAssembler.ToResourceFromEntity(profile);
+    //     return CreatedAtAction(nameof(GetProfileById), new { profileId = profile.Id }, profileResource);
+    // }
+    
     [HttpDelete("{profileId:int}")]
     [SwaggerOperation(
         Summary     = "Delete a profile",

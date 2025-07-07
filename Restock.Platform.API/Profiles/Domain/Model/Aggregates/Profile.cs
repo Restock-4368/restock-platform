@@ -25,14 +25,19 @@ public class Profile
     
     public string FullName => Name.FullName; 
 
-    public Profile()
+    public Profile(){}
+    
+    public Profile(int userId, int businessId)
     {
+        UserId = new UserId(userId);
+        BusinessId = businessId;
+        Avatar = new Avatar();
         Name = new PersonName();
         Email = string.Empty;
         Address = string.Empty;
         Phone = string.Empty;
         Country = string.Empty;
-    }
+    } 
     
     public Profile(string firstName, string lastName, string avatar, string email, string phone, string address, string country, int userId, int businessId)
     {
@@ -46,14 +51,7 @@ public class Profile
         Avatar = new Avatar(avatar);
     }
 
-    public Profile(CreateProfileCommand command) : this(
-        command.FirstName, 
-        command.LastName, 
-        command.Avatar,
-        command.Email,
-        command.Phone, 
-        command.Address, 
-        command.Country,
+    public Profile(CreateProfileCommand command) : this( 
         command.UserId,
         command.BusinessId)
     {
