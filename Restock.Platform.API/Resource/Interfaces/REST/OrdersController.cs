@@ -275,7 +275,7 @@ public class OrdersController(
     //Commands to change situation and state of the order
     
     // POST /api/v1/orders/{orderId}/approve
-    [HttpPost("{orderId:int}/approve")]
+    [HttpPost("{orderId:int}/approvals")]
     [SwaggerOperation(Summary = "Approve an order", OperationId = "ApproveOrderToSupplier")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Order approved")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
@@ -286,7 +286,7 @@ public class OrdersController(
     }
 
     // POST /api/v1/orders/{orderId}/decline
-    [HttpPost("{orderId:int}/decline")]
+    [HttpPost("{orderId:int}/declines")]
     [SwaggerOperation(Summary = "Decline an order", OperationId = "DeclineOrderToSupplier")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Order declined")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
@@ -297,7 +297,7 @@ public class OrdersController(
     }
 
     // POST /api/v1/orders/{orderId}/cancel
-    [HttpPost("{orderId:int}/cancel")]
+    [HttpPost("{orderId:int}/cancellations")]
     [SwaggerOperation(Summary = "Cancel an order", OperationId = "CancelOrderToSupplier")]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Order cancelled")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Order not found")]
