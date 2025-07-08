@@ -35,6 +35,8 @@ public class AuthenticationController(IUserCommandService userCommandService) : 
     {
         try
         { 
+            Console.WriteLine($"Username: {signInResource?.Username}, Password: {signInResource?.Password}");
+
             var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(signInResource);
              
             var authenticatedUser = await userCommandService.Handle(signInCommand);
