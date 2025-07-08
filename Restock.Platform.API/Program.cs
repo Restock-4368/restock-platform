@@ -268,6 +268,7 @@ app.Use(async (context, next) =>
 
 app.UseRequestLocalization();
 
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.UseRequestAuthorization();
