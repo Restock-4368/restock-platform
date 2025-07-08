@@ -271,7 +271,7 @@ app.UseRequestLocalization();
 app.UseAuthentication(); 
 app.UseAuthorization();
 
-app.UseRequestAuthorization();
+// app.UseRequestAuthorization();
 
 app.MapControllers();
 
