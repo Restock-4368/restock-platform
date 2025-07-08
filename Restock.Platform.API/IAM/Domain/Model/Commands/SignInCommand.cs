@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Restock.Platform.API.IAM.Domain.Model.Commands;
+﻿namespace Restock.Platform.API.IAM.Domain.Model.Commands;
 
 /**
  * <summary>
@@ -10,7 +8,4 @@ namespace Restock.Platform.API.IAM.Domain.Model.Commands;
  *     This command object includes the username and password to sign in
  * </remarks>
  */
-public record SignInCommand(
-    [property: JsonPropertyName("username")] string Username,
-    [property: JsonPropertyName("password")] string Password
-);
+public record SignInCommand(string Username, string Password);
