@@ -13,8 +13,12 @@ public static class ModelBuilderExtensions
         
         builder.Entity<User>().HasKey(u => u.Id);
         builder.Entity<User>().Property(u => u.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<User>().Property(u => u.Username).IsRequired();
-        builder.Entity<User>().Property(u => u.PasswordHash).IsRequired();
+        builder.Entity<User>().Property(u => u.Username)
+            .IsRequired()
+            .HasMaxLength(100);
+        builder.Entity<User>().Property(u => u.PasswordHash)
+            .IsRequired()
+            .HasMaxLength(255);
         builder.Entity<User>().Property(u => u.RoleId).IsRequired();
             
         //Roles
